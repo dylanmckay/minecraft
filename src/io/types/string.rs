@@ -15,28 +15,17 @@ impl<'a> Type for String
             return Err(Error::BadData("string is shorter than prefix varint claims".to_owned()));
         }
 
-        let str_bytes: Vec<u16> = str_bytes.chunks(2).map(|a| {
-            ((a[0] as u16) << 8) | ((a[1] as u16) << 0)
-        }).collect();
-
-        let str = String::from_utf16(str_bytes.as_slice())?;
+        let str = String::from_utf8(str_bytes)?;
         Ok(str)
     }
 
     fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
         use std::io::Write;
 
-        let byte_count = VarInt(self.chars().map(|c| c.len_utf16() as i32).sum());
+        let byte_count = VarInt((self.as_bytes().len() as i32));
         byte_count.write(buffer)?;
 
-        for code_unit in self.encode_utf16() {
-            let bytes = &[
-                ((code_unit & 0xff00) >> 8) as u8 |
-                ((code_unit & 0x00ff) >> 0) as u8
-            ];
-
-            buffer.write(bytes)?;
-        }
+        buffer.write(self.as_bytes())?;
 
         Ok(())
     }

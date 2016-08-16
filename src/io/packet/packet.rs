@@ -3,6 +3,7 @@ use io::packet::types::*;
 use io::Error;
 use game;
 
+#[derive(Debug)]
 pub enum Packet
 {
     Handshake(Handshake),

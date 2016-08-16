@@ -17,7 +17,7 @@ pub struct PacketBuilder
 }
 
 /// A possibly partially-read packet.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PartialPacket
 {
     size: usize,
@@ -35,8 +35,8 @@ impl PacketBuilder
     }
 
     /// Gives byyes to the builder.
-    pub fn give(&mut self, data: Vec<u8>) {
-        self.byte_queue.extend(data.into_iter());
+    pub fn give(&mut self, data: &[u8]) {
+        self.byte_queue.extend(data.iter().cloned());
         self.process();
     }
 

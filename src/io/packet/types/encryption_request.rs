@@ -2,7 +2,7 @@ use io::types::*;
 use io::{packet, Error, Buffer};
 use std;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct EncryptionRequest
 {
     pub server_id: String,
@@ -12,7 +12,7 @@ pub struct EncryptionRequest
 
 impl packet::Realization for EncryptionRequest
 {
-    const PACKET_ID: i32 = 0x01;
+    const PACKET_ID: VarInt = VarInt(0x01);
 
     fn parse(data: Vec<u8>) -> Result<Self, Error> {
         let mut cursor = std::io::Cursor::new(data);
@@ -24,7 +24,7 @@ impl packet::Realization for EncryptionRequest
         })
     }
 
-    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
+    fn write_payload(&self, buffer: &mut Buffer) -> Result<(), Error> {
         self.server_id.write(buffer)?;
         self.public_key.write(buffer)?;
         self.verify_token.write(buffer)?;

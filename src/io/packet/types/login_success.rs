@@ -2,7 +2,7 @@ use io::types::*;
 use io::{packet, Error, Buffer};
 use std;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LoginSuccess
 {
     pub uuid: String,
@@ -11,7 +11,7 @@ pub struct LoginSuccess
 
 impl packet::Realization for LoginSuccess
 {
-    const PACKET_ID: i32 = 0x02;
+    const PACKET_ID: VarInt = VarInt(0x02);
 
     fn parse(data: Vec<u8>) -> Result<Self, Error> {
         let mut cursor = std::io::Cursor::new(data);
@@ -22,7 +22,7 @@ impl packet::Realization for LoginSuccess
         })
     }
 
-    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
+    fn write_payload(&self, buffer: &mut Buffer) -> Result<(), Error> {
         self.uuid.write(buffer)?;
         self.username.write(buffer)?;
 

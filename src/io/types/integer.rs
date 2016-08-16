@@ -26,3 +26,15 @@ impl Type for u16
     }
 }
 
+impl Type for i32
+{
+    fn read(buffer: &mut Buffer) -> Result<Self, Error> {
+        Ok(buffer.read_i32::<BigEndian>()?)
+    }
+
+    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
+        buffer.write_i32::<BigEndian>(*self)?;
+        Ok(())
+    }
+}
+

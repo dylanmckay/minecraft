@@ -2,7 +2,7 @@ use io::types::*;
 use io::{packet, Error, Buffer};
 use std;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LoginStart
 {
     pub username: String,
@@ -10,7 +10,7 @@ pub struct LoginStart
 
 impl packet::Realization for LoginStart
 {
-    const PACKET_ID: i32 = 0x00;
+    const PACKET_ID: VarInt = VarInt(0x00);
 
     fn parse(data: Vec<u8>) -> Result<Self, Error> {
         let mut cursor = std::io::Cursor::new(data);
@@ -20,7 +20,7 @@ impl packet::Realization for LoginStart
         })
     }
 
-    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
+    fn write_payload(&self, buffer: &mut Buffer) -> Result<(), Error> {
         self.username.write(buffer)?;
 
         Ok(())

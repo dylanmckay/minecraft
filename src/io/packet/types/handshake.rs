@@ -5,7 +5,7 @@ use std;
 pub const STATE_STATUS: VarInt = VarInt(1);
 pub const STATE_LOGIN: VarInt = VarInt(2);
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Handshake
 {
     pub protocol_version: VarInt,
@@ -16,7 +16,7 @@ pub struct Handshake
 
 impl packet::Realization for Handshake
 {
-    const PACKET_ID: i32 = 0x00;
+    const PACKET_ID: VarInt = VarInt(0x00);
 
     fn parse(data: Vec<u8>) -> Result<Self, Error> {
         let mut cursor = std::io::Cursor::new(data);
@@ -29,7 +29,7 @@ impl packet::Realization for Handshake
         })
     }
 
-    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
+    fn write_payload(&self, buffer: &mut Buffer) -> Result<(), Error> {
         self.protocol_version.write(buffer)?;
         self.server_address.write(buffer)?;
         self.server_port.write(buffer)?;

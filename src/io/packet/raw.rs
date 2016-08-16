@@ -1,3 +1,5 @@
+use io::types::VarInt;
+
 /// A raw packet.
 pub enum Packet
 {
@@ -9,8 +11,8 @@ pub enum Packet
 pub struct UncompressedPacket
 {
     /// Length of proceding data.
-    pub length: i32,
-    pub packet_id: i32,
+    pub length: VarInt,
+    pub packet_id: VarInt,
     pub data: Vec<u8>,
 }
 
@@ -18,13 +20,13 @@ pub struct UncompressedPacket
 pub struct CompressedPacket
 {
     /// Length of proceding data.
-    pub packet_length: i32,
+    pub packet_length: VarInt,
 
     /// Length of uncompressed packet ID and data (or 0).
-    pub data_length: i32,
+    pub data_length: VarInt,
 
     /// zlib compressed packet ID.
-    pub compressed_packet_id: i32,
+    pub compressed_packet_id: VarInt,
     /// zlib compressed packet data.
     pub compressed_data: Vec<u8>,
 }

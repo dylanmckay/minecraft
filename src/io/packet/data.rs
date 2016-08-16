@@ -1,9 +1,10 @@
 use io::packet::raw;
+use io::types::VarInt;
 
 /// Processed packet data (always uncompressed).
 pub struct Data
 {
-    pub packet_id: i32,
+    pub packet_id: VarInt,
     pub data: Vec<u8>,
 }
 

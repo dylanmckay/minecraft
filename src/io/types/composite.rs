@@ -2,7 +2,7 @@ use io::{Type, Buffer, Error};
 use io::types::VarInt;
 
 /// A list of other types.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Composite<T: Type>
 {
     pub elements: Vec<T>,
