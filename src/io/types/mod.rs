@@ -1,8 +1,10 @@
 pub use self::varint::VarInt;
+pub use self::composite::Composite;
 
 pub mod string;
 pub mod integer;
 pub mod varint;
+pub mod composite;
 
 use io::{Buffer, Error};
 
