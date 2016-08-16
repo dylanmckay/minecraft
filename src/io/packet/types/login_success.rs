@@ -1,6 +1,6 @@
 use io::types::*;
-use io::{packet, Error, Buffer};
-use std;
+use io::{packet, Error};
+use std::io::{Read, Write};
 
 #[derive(Clone, Debug)]
 pub struct LoginSuccess
@@ -13,18 +13,16 @@ impl packet::Realization for LoginSuccess
 {
     const PACKET_ID: VarInt = VarInt(0x02);
 
-    fn parse(data: Vec<u8>) -> Result<Self, Error> {
-        let mut cursor = std::io::Cursor::new(data);
-
+    fn parse(read: &mut Read) -> Result<Self, Error> {
         Ok(LoginSuccess {
-            uuid: String::read(&mut cursor)?,
-            username: String::read(&mut cursor)?,
+            uuid: String::read(read)?,
+            username: String::read(read)?,
         })
     }
 
-    fn write_payload(&self, buffer: &mut Buffer) -> Result<(), Error> {
-        self.uuid.write(buffer)?;
-        self.username.write(buffer)?;
+    fn write_payload(&self, write: &mut Write) -> Result<(), Error> {
+        self.uuid.write(write)?;
+        self.username.write(write)?;
 
         Ok(())
     }

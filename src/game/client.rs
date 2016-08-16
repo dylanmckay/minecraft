@@ -5,7 +5,6 @@ use io::{types, packet};
 use mio::*;
 use mio::tcp::TcpStream;
 
-use io;
 use std;
 
 const INITIAL_STATE: State = State::Handshake;
@@ -84,10 +83,7 @@ impl Client
     }
 
     pub fn send_packet<P: packet::Realization>(&mut self, packet: &P) {
-        let mut buffer = io::Buffer::new(Vec::new());
-        packet.write(&mut buffer).expect("failed while writing packet");
-        self.server_stream.write(&buffer.get_ref()).unwrap();
-
+        packet.write(&mut self.server_stream).expect("failed while writing packet");
         self.server_stream.flush().expect("error while flushing");
     }
 }

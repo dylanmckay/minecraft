@@ -1,5 +1,5 @@
-use io::{Type, Buffer, Error};
-use std::io;
+use io::{Type, Error};
+use std::io::{Read, Write};
 
 use byteorder::{ReadBytesExt, WriteBytesExt};
 
@@ -7,15 +7,15 @@ use byteorder::{ReadBytesExt, WriteBytesExt};
 #[derive(Copy,Clone,Debug,PartialEq,Eq)]
 pub struct VarInt(pub i32);
 
-impl VarInt
+impl Type for VarInt
 {
-    pub fn read_from<R: io::Read>(buf: &mut R) -> Result<Self, Error> {
+    fn read(read: &mut Read) -> Result<Self, Error> {
         const PART : u32 = 0x7F;
         let mut size = 0;
         let mut val = 0u32;
 
         loop {
-            let b = try!(buf.read_u8()) as u32;
+            let b = try!(read.read_u8()) as u32;
             val |= (b & PART) << (size * 7);
             size += 1;
 
@@ -31,28 +31,18 @@ impl VarInt
         Result::Ok(VarInt(val as i32))
     }
 
-    pub fn write_to<W: io::Write>(&self, buf: &mut W) -> Result<(), Error> {
+    fn write(&self, write: &mut Write) -> Result<(), Error> {
         const PART : u32 = 0x7F;
         let mut val = self.0 as u32;
+
         loop {
             if (val & !PART) == 0 {
-                try!(buf.write_u8(val as u8));
+                try!(write.write_u8(val as u8));
                 return Result::Ok(());
             }
-            try!(buf.write_u8(((val & PART) | 0x80) as u8));
+            try!(write.write_u8(((val & PART) | 0x80) as u8));
             val >>= 7;
         }
-    }
-}
-
-impl Type for VarInt
-{
-    fn read(buffer: &mut Buffer) -> Result<Self, Error> {
-        VarInt::read_from(buffer)
-    }
-
-    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
-        self.write_to(buffer)
     }
 }
 

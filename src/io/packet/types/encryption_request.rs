@@ -1,6 +1,6 @@
 use io::types::*;
-use io::{packet, Error, Buffer};
-use std;
+use io::{packet, Error};
+use std::io::{Read, Write};
 
 #[derive(Clone, Debug)]
 pub struct EncryptionRequest
@@ -14,20 +14,18 @@ impl packet::Realization for EncryptionRequest
 {
     const PACKET_ID: VarInt = VarInt(0x01);
 
-    fn parse(data: Vec<u8>) -> Result<Self, Error> {
-        let mut cursor = std::io::Cursor::new(data);
-
+    fn parse(read: &mut Read) -> Result<Self, Error> {
         Ok(EncryptionRequest {
-            server_id: String::read(&mut cursor)?,
-            public_key: ByteArray::read(&mut cursor)?,
-            verify_token: ByteArray::read(&mut cursor)?,
+            server_id: String::read(read)?,
+            public_key: ByteArray::read(read)?,
+            verify_token: ByteArray::read(read)?,
         })
     }
 
-    fn write_payload(&self, buffer: &mut Buffer) -> Result<(), Error> {
-        self.server_id.write(buffer)?;
-        self.public_key.write(buffer)?;
-        self.verify_token.write(buffer)?;
+    fn write_payload(&self, write: &mut Write) -> Result<(), Error> {
+        self.server_id.write(write)?;
+        self.public_key.write(write)?;
+        self.verify_token.write(write)?;
 
         Ok(())
     }

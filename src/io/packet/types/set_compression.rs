@@ -1,6 +1,6 @@
 use io::types::*;
-use io::{packet, Error, Buffer};
-use std;
+use io::{packet, Error};
+use std::io::{Read, Write};
 
 #[derive(Clone, Debug)]
 pub struct SetCompression
@@ -12,16 +12,14 @@ impl packet::Realization for SetCompression
 {
     const PACKET_ID: VarInt = VarInt(0x03);
 
-    fn parse(data: Vec<u8>) -> Result<Self, Error> {
-        let mut cursor = std::io::Cursor::new(data);
-
+    fn parse(read: &mut Read) -> Result<Self, Error> {
         Ok(SetCompression {
-            threshold: VarInt::read(&mut cursor)?,
+            threshold: VarInt::read(read)?,
         })
     }
 
-    fn write_payload(&self, buffer: &mut Buffer) -> Result<(), Error> {
-        self.threshold.write(buffer)?;
+    fn write_payload(&self, write: &mut Write) -> Result<(), Error> {
+        self.threshold.write(write)?;
 
         Ok(())
     }

@@ -64,7 +64,7 @@ impl Cooked
         -> packet::raw::Packet {
         let mut cursor = Cursor::new(packet.retrieved_data);
 
-        let packet_id = VarInt::read_from(&mut cursor).unwrap();
+        let packet_id = VarInt::read(&mut cursor).unwrap();
         let packet_data: Vec<u8> = cursor.bytes().map(|a| a.unwrap()).collect();
 
         packet::raw::Packet::Uncompressed(packet::raw::UncompressedPacket {

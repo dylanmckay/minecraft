@@ -1,5 +1,6 @@
-use io::{Type, Buffer, Error};
+use io::{Type, Error};
 use io::types::VarInt;
+use std::io::{Read, Write};
 
 /// A list of other types.
 #[derive(Clone, Debug)]
@@ -10,15 +11,15 @@ pub struct Composite<T: Type>
 
 impl<T: Type> Type for Composite<T>
 {
-    fn read(buffer: &mut Buffer) -> Result<Self, Error> {
-        let length = VarInt::read(buffer)?;
+    fn read(read: &mut Read) -> Result<Self, Error> {
+        let length = VarInt::read(read)?;
 
         // FIXME: validate the length so we don't read too much data.
 
         let mut items = Vec::new();
 
         for _ in 0..length.0 {
-            items.push(T::read(buffer)?);
+            items.push(T::read(read)?);
         }
 
         Ok(Composite {
@@ -26,12 +27,12 @@ impl<T: Type> Type for Composite<T>
         })
     }
 
-    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
+    fn write(&self, write: &mut Write) -> Result<(), Error> {
         let length = VarInt(self.elements.len() as _);
-        length.write(buffer)?;
+        length.write(write)?;
 
         for element in self.elements.iter() {
-            element.write(buffer)?;
+            element.write(write)?;
         }
 
         Ok(())

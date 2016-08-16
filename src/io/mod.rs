@@ -6,5 +6,3 @@ pub mod types;
 pub mod error;
 pub mod packet;
 
-pub type Buffer = ::std::io::Cursor<Vec<u8>>;
-

@@ -1,6 +1,7 @@
-use io::{Buffer, Type};
+use io::Type;
 use io::types::VarInt;
 use std::collections::VecDeque;
+use std::io::Cursor;
 use std::cmp;
 
 /// The maximum number of bytes a varint can take up.
@@ -56,7 +57,7 @@ impl Raw
                     let (size, bytes_read) = {
                         // shit as but it hopefully works
                         let tmp: Vec<_> = self.byte_queue.iter().cloned().collect();
-                        let mut tmp_buffer = Buffer::new(tmp);
+                        let mut tmp_buffer = Cursor::new(tmp);
 
                         let size = VarInt::read(&mut tmp_buffer).unwrap();
                         let bytes_read = tmp_buffer.position();
