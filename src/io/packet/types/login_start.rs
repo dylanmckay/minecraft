@@ -3,8 +3,6 @@ use io::packet;
 use io::Error;
 use std;
 
-pub const PACKET_ID: i32 = 0x00;
-
 #[derive(Clone)]
 pub struct LoginStart
 {
@@ -13,6 +11,8 @@ pub struct LoginStart
 
 impl packet::Realization for LoginStart
 {
+    const PACKET_ID: i32 = 0x00;
+
     fn parse(data: Vec<u8>) -> Result<Self, Error> {
         let mut cursor = std::io::Cursor::new(data);
 

@@ -3,8 +3,6 @@ use io::packet;
 use io::Error;
 use std;
 
-pub const PACKET_ID: i32 = 0x00;
-
 pub const STATE_STATUS: VarInt = VarInt(1);
 pub const STATE_LOGIN: VarInt = VarInt(2);
 
@@ -19,6 +17,8 @@ pub struct Handshake
 
 impl packet::Realization for Handshake
 {
+    const PACKET_ID: i32 = 0x00;
+
     fn parse(data: Vec<u8>) -> Result<Self, Error> {
         let mut cursor = std::io::Cursor::new(data);
 

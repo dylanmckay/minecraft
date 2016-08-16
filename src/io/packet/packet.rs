@@ -30,7 +30,7 @@ mod parse {
 
     pub fn handshake_state(data: packet::Data) -> Result<Packet, Error> {
         match data.packet_id {
-            types::handshake::PACKET_ID => {
+            types::Handshake::PACKET_ID => {
                 Ok(Packet::Handshake(types::Handshake::parse(data.data)?))
             },
             _ => unimplemented!(),
@@ -39,7 +39,7 @@ mod parse {
 
     pub fn login_state(data: packet::Data) -> Result<Packet, Error> {
         match data.packet_id {
-            types::login_start::PACKET_ID => {
+            types::LoginStart::PACKET_ID => {
                 Ok(Packet::LoginStart(types::LoginStart::parse(data.data)?))
             },
             _ => unimplemented!(),
