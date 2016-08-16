@@ -7,6 +7,7 @@ pub enum Packet
 {
     Handshake(Handshake),
     LoginStart(LoginStart),
+    LoginSuccess(LoginSuccess),
     EncryptionRequest(EncryptionRequest),
     EncryptionResponse(EncryptionResponse),
 }
@@ -48,6 +49,9 @@ mod parse {
             },
             (Source::Client, types::EncryptionResponse::PACKET_ID) => {
                 Ok(Packet::EncryptionResponse(types::EncryptionResponse::parse(data.data)?))
+            },
+            (Source::Server, types::LoginSuccess::PACKET_ID) => {
+                Ok(Packet::LoginSuccess(types::LoginSuccess::parse(data.data)?))
             },
             _ => unimplemented!(),
         }
