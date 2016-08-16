@@ -7,6 +7,7 @@ use std;
 pub trait Realization : Clone + std::fmt::Debug
 {
     const PACKET_ID: VarInt;
+    const DESCRIPTION: &'static str;
 
     fn parse(read: &mut Read) -> Result<Self, Error>;
 
@@ -29,5 +30,6 @@ pub trait Realization : Clone + std::fmt::Debug
     }
 
     fn packet_id(&self) -> VarInt { Self::PACKET_ID }
+    fn description(&self) -> &'static str { Self::DESCRIPTION }
 }
 

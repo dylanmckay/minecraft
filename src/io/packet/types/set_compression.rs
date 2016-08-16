@@ -11,6 +11,7 @@ pub struct SetCompression
 impl packet::Realization for SetCompression
 {
     const PACKET_ID: VarInt = VarInt(0x03);
+    const DESCRIPTION: &'static str = "set compression";
 
     fn parse(read: &mut Read) -> Result<Self, Error> {
         Ok(SetCompression {

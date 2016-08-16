@@ -1,6 +1,6 @@
 use game::State;
 use std::io::{Read, Write};
-use io::{types, packet};
+use io::{types, packet, Packet, Error};
 
 use mio::*;
 use mio::tcp::TcpStream;
@@ -60,9 +60,14 @@ impl Client
     pub fn tick(&mut self) {
         while let Some(result) = self.packet_builder.take_packet(packet::Source::Server, self.current_state) {
             match result {
-                Ok(packet) => println!("received packet: {:#?}", packet),
-                Err(e) => {
-                    println!("error reading packet: {:#?}", e);
+                Ok(ref packet) => self.handle_packet(packet),
+                Err(e) => match e {
+                    Error::UnknownPacket(ref data) => {
+                        println!("unknown packet id: {}", data.packet_id.0);
+                    },
+                    _ => {
+                        panic!("unexpected error: {:#?}", e);
+                    }
                 },
             }
         }
@@ -82,9 +87,12 @@ impl Client
         event_loop.run(self).unwrap();
     }
 
-    pub fn send_packet<P: packet::Realization>(&mut self, packet: &P) {
+    fn send_packet<P: packet::Realization>(&mut self, packet: &P) {
         packet.write(&mut self.server_stream).expect("failed while writing packet");
         self.server_stream.flush().expect("error while flushing");
+    }
+
+    fn handle_packet(&mut self, packet: &Packet) {
     }
 }
 

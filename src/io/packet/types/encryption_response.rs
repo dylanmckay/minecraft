@@ -12,6 +12,7 @@ pub struct EncryptionResponse
 impl packet::Realization for EncryptionResponse
 {
     const PACKET_ID: VarInt = VarInt(0x01);
+    const DESCRIPTION: &'static str = "encryption response";
 
     fn parse(read: &mut Read)-> Result<Self, Error> {
         Ok(EncryptionResponse {

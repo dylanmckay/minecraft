@@ -17,6 +17,7 @@ pub struct Handshake
 impl packet::Realization for Handshake
 {
     const PACKET_ID: VarInt = VarInt(0x00);
+    const DESCRIPTION: &'static str = "handshake";
 
     fn parse(read: &mut Read) -> Result<Self, Error> {
         Ok(Handshake {

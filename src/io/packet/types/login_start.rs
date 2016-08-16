@@ -11,6 +11,7 @@ pub struct LoginStart
 impl packet::Realization for LoginStart
 {
     const PACKET_ID: VarInt = VarInt(0x00);
+    const DESCRIPTION: &'static str = "login start";
 
     fn parse(read: &mut Read) -> Result<Self, Error> {
         Ok(LoginStart {

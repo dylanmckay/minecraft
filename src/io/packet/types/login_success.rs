@@ -12,6 +12,7 @@ pub struct LoginSuccess
 impl packet::Realization for LoginSuccess
 {
     const PACKET_ID: VarInt = VarInt(0x02);
+    const DESCRIPTION: &'static str = "login success";
 
     fn parse(read: &mut Read) -> Result<Self, Error> {
         Ok(LoginSuccess {

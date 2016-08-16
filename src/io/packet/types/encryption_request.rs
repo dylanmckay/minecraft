@@ -13,6 +13,7 @@ pub struct EncryptionRequest
 impl packet::Realization for EncryptionRequest
 {
     const PACKET_ID: VarInt = VarInt(0x01);
+    const DESCRIPTION: &'static str = "encryption request";
 
     fn parse(read: &mut Read) -> Result<Self, Error> {
         Ok(EncryptionRequest {
