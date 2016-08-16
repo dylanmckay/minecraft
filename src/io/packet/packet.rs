@@ -11,6 +11,7 @@ pub enum Packet
     LoginSuccess(LoginSuccess),
     EncryptionRequest(EncryptionRequest),
     EncryptionResponse(EncryptionResponse),
+    SetCompression(SetCompression),
 }
 
 impl Packet
@@ -53,6 +54,9 @@ mod parse {
             },
             (Source::Server, types::LoginSuccess::PACKET_ID) => {
                 Ok(Packet::LoginSuccess(types::LoginSuccess::parse(data.data)?))
+            },
+            (Source::Server, types::SetCompression::PACKET_ID) => {
+                Ok(Packet::SetCompression(types::SetCompression::parse(data.data)?))
             },
             _ => Err(Error::UnknownPacket(data)),
         }
