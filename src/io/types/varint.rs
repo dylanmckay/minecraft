@@ -9,19 +9,16 @@ pub struct VarInt(pub i32);
 
 impl VarInt
 {
-    pub fn required_bytes(&self) -> usize {
-        use integer_encoding::VarInt;
-        self.0.required_space()
-    }
-
     fn read_from<R: io::Read>(buf: &mut R) -> Result<Self, Error> {
         const PART : u32 = 0x7F;
         let mut size = 0;
         let mut val = 0u32;
+
         loop {
             let b = try!(buf.read_u8()) as u32;
             val |= (b & PART) << (size * 7);
             size += 1;
+
             if size > 5 {
                 // TODO: turn this into error result
                 panic!("varint too big");
@@ -34,7 +31,6 @@ impl VarInt
         Result::Ok(VarInt(val as i32))
     }
 
-    /// Encodes a `VarInt` into the Writer
     fn write_to<W: io::Write>(&self, buf: &mut W) -> Result<(), Error> {
         const PART : u32 = 0x7F;
         let mut val = self.0 as u32;

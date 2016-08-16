@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["Dylan McKay <dylanmckay34@gmail.com>"]
 
 [dependencies]
-integer-encoding = "0.12.0"
 byteorder = "0.5.3"
 mio = "0.5.1"
 

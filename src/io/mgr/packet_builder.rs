@@ -61,7 +61,7 @@ impl PacketBuilder
                         let mut tmp_buffer = Buffer::new(tmp);
 
                         let size = VarInt::read(&mut tmp_buffer).unwrap();
-                        let bytes_read = size.required_bytes();
+                        let bytes_read = tmp_buffer.position();
 
                         (size.0, bytes_read)
                     };

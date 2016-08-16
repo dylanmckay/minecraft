@@ -5,7 +5,6 @@
 pub mod io;
 pub mod game;
 
-extern crate integer_encoding;
 extern crate byteorder;
 extern crate mio;
 
