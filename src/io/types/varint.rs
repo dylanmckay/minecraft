@@ -4,12 +4,12 @@ use std::io;
 use byteorder::{ReadBytesExt, WriteBytesExt};
 
 /// A variable sized int.
-#[derive(Clone,Debug,PartialEq,Eq)]
+#[derive(Copy,Clone,Debug,PartialEq,Eq)]
 pub struct VarInt(pub i32);
 
 impl VarInt
 {
-    fn read_from<R: io::Read>(buf: &mut R) -> Result<Self, Error> {
+    pub fn read_from<R: io::Read>(buf: &mut R) -> Result<Self, Error> {
         const PART : u32 = 0x7F;
         let mut size = 0;
         let mut val = 0u32;
@@ -31,7 +31,7 @@ impl VarInt
         Result::Ok(VarInt(val as i32))
     }
 
-    fn write_to<W: io::Write>(&self, buf: &mut W) -> Result<(), Error> {
+    pub fn write_to<W: io::Write>(&self, buf: &mut W) -> Result<(), Error> {
         const PART : u32 = 0x7F;
         let mut val = self.0 as u32;
         loop {

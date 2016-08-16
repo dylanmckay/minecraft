@@ -2,6 +2,7 @@ use io::packet::raw;
 use io::types::VarInt;
 
 /// Processed packet data (always uncompressed).
+#[derive(Clone,Debug)]
 pub struct Data
 {
     pub packet_id: VarInt,

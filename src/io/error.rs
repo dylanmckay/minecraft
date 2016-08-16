@@ -1,3 +1,4 @@
+use io;
 use std;
 
 #[derive(Debug)]
@@ -6,6 +7,7 @@ pub enum Error
     BadData(String),
     Io(std::io::Error),
     InvalidUtf8(std::string::FromUtf8Error),
+    UnknownPacket(io::packet::Data)
 }
 
 impl From<std::io::Error> for Error

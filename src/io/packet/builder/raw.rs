@@ -6,45 +6,43 @@ use std::cmp;
 /// The maximum number of bytes a varint can take up.
 const MAXIMUM_VARINT_SIZE: usize = 5;
 
-/// Builds packets.
-pub struct PacketBuilder
+/// Builds raw packets.
+pub struct Raw
 {
     /// The buffer of unprocessed bytes.
     byte_queue: VecDeque<u8>,
 
     current_packet: Option<PartialPacket>,
-    completed_packets: Vec<PartialPacket>,
+    completed_packets: VecDeque<PartialPacket>,
 }
 
 /// A possibly partially-read packet.
 #[derive(Clone, Debug)]
 pub struct PartialPacket
 {
-    size: usize,
-    retrieved_data: Vec<u8>,
+    pub size: usize,
+    pub retrieved_data: Vec<u8>,
 }
 
-impl PacketBuilder
+impl Raw
 {
     pub fn new() -> Self {
-        PacketBuilder {
+        Raw {
             byte_queue: VecDeque::new(),
             current_packet: None,
-            completed_packets: Vec::new(),
+            completed_packets: VecDeque::new(),
         }
     }
 
-    /// Gives byyes to the builder.
-    pub fn give(&mut self, data: &[u8]) {
+    /// Gives bytes to the builder.
+    pub fn give_bytes(&mut self, data: &[u8]) {
         self.byte_queue.extend(data.iter().cloned());
         self.process();
     }
 
-    /// Consumes all of the packets which have been processed.
-    pub fn consume_packets(&mut self) -> impl Iterator<Item=PartialPacket> {
-        let completed_packets = self.completed_packets.clone();
-        self.completed_packets = Vec::new();
-        completed_packets.into_iter()
+    /// Takes a packet off of the queue.
+    pub fn take_packet(&mut self) -> Option<PartialPacket> {
+        self.completed_packets.pop_front()
     }
 
     fn process(&mut self) {
@@ -103,7 +101,7 @@ impl PacketBuilder
         }
 
         if self.current_packet.as_ref().unwrap().is_complete() {
-            self.completed_packets.push(self.current_packet.as_ref().unwrap().clone());
+            self.completed_packets.push_back(self.current_packet.as_ref().unwrap().clone());
             self.current_packet = None;
         }
     }

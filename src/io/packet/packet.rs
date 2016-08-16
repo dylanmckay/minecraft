@@ -3,7 +3,7 @@ use io::packet::types::*;
 use io::Error;
 use game;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Packet
 {
     Handshake(Handshake),
@@ -36,7 +36,7 @@ mod parse {
             (Source::Client, types::Handshake::PACKET_ID) => {
                 Ok(Packet::Handshake(types::Handshake::parse(data.data)?))
             },
-            _ => unimplemented!(),
+            _ => Err(Error::UnknownPacket(data)),
         }
     }
 
@@ -54,7 +54,7 @@ mod parse {
             (Source::Server, types::LoginSuccess::PACKET_ID) => {
                 Ok(Packet::LoginSuccess(types::LoginSuccess::parse(data.data)?))
             },
-            _ => unimplemented!(),
+            _ => Err(Error::UnknownPacket(data)),
         }
     }
 }

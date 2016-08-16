@@ -1,6 +1,6 @@
 use game::State;
 use std::io::{Read, Write};
-use io::{types, packet, PacketBuilder};
+use io::{types, packet};
 
 use mio::*;
 use mio::tcp::TcpStream;
@@ -19,7 +19,7 @@ pub struct Client
     pub current_state: State,
 
     server_stream: TcpStream,
-    packet_builder: PacketBuilder,
+    packet_builder: packet::builder::Cooked,
 }
 
 impl Client
@@ -28,7 +28,7 @@ impl Client
         Client {
             current_state: INITIAL_STATE,
             server_stream: server_stream,
-            packet_builder: PacketBuilder::new(),
+            packet_builder: packet::builder::Cooked::new(),
         }
     }
 
@@ -40,8 +40,11 @@ impl Client
     }
 
     pub fn login(&mut self) {
-        let server_addr = self.server_stream.peer_addr().expect("no socket addresses found");
-        let (ip, port) = (format!("{}", server_addr.ip()), server_addr.port());
+        // FIXME: this code is commented out because it would sporadically give 'socket not
+        // connected' errors.
+        // let server_addr = self.server_stream.peer_addr().expect("no socket addresses found");
+        // let (ip, port) = (format!("{}", server_addr.ip()), server_addr.port());
+        let (ip, port) = ("192.168.1.1".to_owned(), 25565);
 
         self.send_packet(&packet::Handshake {
             protocol_version: types::VarInt(210),
@@ -50,7 +53,20 @@ impl Client
             next_state: packet::types::handshake::STATE_LOGIN,
         });
 
+        self.current_state = State::Login;
+
         self.send_packet(&packet::LoginStart { username: "dylan".to_owned() });
+    }
+
+    pub fn tick(&mut self) {
+        while let Some(result) = self.packet_builder.take_packet(packet::Source::Server, self.current_state) {
+            match result {
+                Ok(packet) => println!("received packet: {:#?}", packet),
+                Err(e) => {
+                    println!("error reading packet: {:#?}", e);
+                },
+            }
+        }
     }
 
     pub fn run(&mut self) {
@@ -87,11 +103,7 @@ impl Handler for Client {
                     let mut buffer = [0u8; 10000];
                     let bytes_read = self.server_stream.read(&mut buffer).unwrap();
 
-                    self.packet_builder.give(&buffer[0..bytes_read]);
-
-                    for packet in self.packet_builder.consume_packets() {
-                        println!("received packet: {:#?}", packet);
-                    }
+                    self.packet_builder.give_bytes(&buffer[0..bytes_read]);
                 }
             }
             _ => panic!("unexpected token"),
@@ -99,7 +111,8 @@ impl Handler for Client {
     }
 
     fn timeout(&mut self, event_loop: &mut EventLoop<Self>, _timeout: Self::Timeout) {
-        println!("timeout");
+        self.tick();
+
         event_loop.timeout_ms(TICK_TIMER, TICK_MS).expect("failed to set up tick timer");
     }
 }
