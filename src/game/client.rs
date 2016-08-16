@@ -49,15 +49,11 @@ impl Handler for PacketHandler {
     fn ready(&mut self, _event_loop: &mut EventLoop<Self>, token: Token, event_set: EventSet) {
         match token {
             CLIENT => {
-                println!("event: {:?}", event_set);
                 if event_set.is_readable() {
-                    println!("readable");
                     let mut buffer = [0u8; 512];
-                    self.socket.read(&mut buffer).unwrap();
+                    let bytes_read = self.socket.read(&mut buffer).unwrap();
 
-                    println!("read: {:?}", buffer.as_ref());
-
-                    self.packet_builder.give(&buffer);
+                    self.packet_builder.give(&buffer[0..bytes_read]);
 
                     for packet in self.packet_builder.consume_packets() {
                         println!("received packet: {:#?}", packet);
@@ -73,14 +69,14 @@ pub fn run() {
     let addr = "127.0.0.1:25565".parse().expect("error while parsing ip");
 
     // Create an event loop
-    // let mut event_loop = EventLoop::new().unwrap();
+    let mut event_loop = EventLoop::new().unwrap();
 
     // Setup the client socket
     let mut sock = TcpStream::connect(&addr).expect("error while connecting to tcp stream");
 
     // Register the socket
-    // event_loop.register(&sock, CLIENT, EventSet::readable(),
-    //                     PollOpt::edge()).unwrap();
+    event_loop.register(&sock, CLIENT, EventSet::readable(),
+                        PollOpt::edge()).unwrap();
 
     let handshake = packet::Handshake {
         protocol_version: VarInt(210),
@@ -96,13 +92,7 @@ pub fn run() {
     {
         let mut buffer = io::Buffer::new(Vec::new());
         handshake.write(&mut buffer).expect("failed while writing handshake");
-
-        for b in buffer.get_ref().iter() {
-            println!("sent: {} - {:8b}", *b as char, b);
-        }
-
-        let bytes_written = sock.write(&buffer.get_ref()).unwrap();
-        println!("wrote {} bytes", bytes_written);
+        sock.write(&buffer.get_ref()).unwrap();
     }
 
     println!("sending login start");
@@ -110,26 +100,14 @@ pub fn run() {
     {
         let mut buffer = io::Buffer::new(Vec::new());
         login_start.write(&mut buffer).expect("failed while writing login start");
-
-        for b in buffer.get_ref().iter() {
-            println!("sent: {} - {:8b}", *b as char, b);
-        }
-
-        let bytes_written = sock.write(&buffer.get_ref()).unwrap();
-        println!("wrote {} bytes", bytes_written);
+        sock.write(&buffer.get_ref()).unwrap();
     }
 
     sock.flush().expect("error while flushing");
 
-    for b in sock.bytes() {
-        if let Ok(a) = b {
-            println!("{} - {:b}", a as char, a);
-        }
-    }
-
-    // let mut handler = PacketHandler::new(sock);
+    let mut handler = PacketHandler::new(sock);
 
     // Start handling events
-    // event_loop.run(&mut handler).unwrap();
+    event_loop.run(&mut handler).unwrap();
 }
 

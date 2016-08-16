@@ -87,18 +87,25 @@ impl PacketBuilder
     fn process_current_packet(&mut self) {
         if self.byte_queue.is_empty() { return; }
 
-        let packet = if let Some(ref mut packet) = self.current_packet { packet } else { return };
+        {
+            let packet = if let Some(ref mut packet) = self.current_packet { packet } else { return };
 
-        let remaining_bytes = packet.remaining_bytes();
-        let bytes_to_add = cmp::min(remaining_bytes, self.byte_queue.len());
+            let remaining_bytes = packet.remaining_bytes();
+            let bytes_to_add = cmp::min(remaining_bytes, self.byte_queue.len());
 
-        let mut new_bytes = Vec::new();
+            let mut new_bytes = Vec::new();
 
-        for _ in 0..bytes_to_add {
-            new_bytes.push(self.byte_queue.pop_front().unwrap());
+            for _ in 0..bytes_to_add {
+                new_bytes.push(self.byte_queue.pop_front().unwrap());
+            }
+
+            packet.retrieved_data.extend(new_bytes.into_iter());
         }
 
-        packet.retrieved_data.extend(new_bytes.into_iter());
+        if self.current_packet.as_ref().unwrap().is_complete() {
+            self.completed_packets.push(self.current_packet.as_ref().unwrap().clone());
+            self.current_packet = None;
+        }
     }
 }
 

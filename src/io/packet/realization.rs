@@ -14,8 +14,6 @@ pub trait Realization : Clone + std::fmt::Debug
     fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
         use std::io::Write;
 
-        println!("position before: {}", buffer.position());
-
         // Write payload to temporary buffer.
         let mut payload = Buffer::new(Vec::new());
         self.packet_id().write(&mut payload)?;
@@ -24,12 +22,9 @@ pub trait Realization : Clone + std::fmt::Debug
 
         // Write the length of the payload.
         let packet_size = payload.get_ref().len();
-
-        println!("packet size: {}", packet_size);
         VarInt(packet_size as _).write(buffer)?;
 
         buffer.write(payload.get_ref())?;
-        println!("position after: {}", buffer.position());
 
         Ok(())
     }
