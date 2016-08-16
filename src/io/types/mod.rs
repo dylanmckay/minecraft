@@ -1,6 +1,7 @@
 pub use self::varint::VarInt;
 
 pub mod string;
+pub mod integer;
 pub mod varint;
 
 use io::{Buffer, Error};
