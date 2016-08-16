@@ -5,6 +5,14 @@ use std::io;
 #[derive(Clone,Debug,PartialEq,Eq)]
 pub struct VarInt(pub i32);
 
+impl VarInt
+{
+    pub fn required_bytes(&self) -> usize {
+        use integer_encoding::VarInt;
+        self.0.required_space()
+    }
+}
+
 impl Type for VarInt
 {
     fn read(buffer: &mut Buffer) -> Result<Self, Error> {

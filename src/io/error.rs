@@ -1,5 +1,6 @@
 use std;
 
+#[derive(Debug)]
 pub enum Error
 {
     BadData(String),

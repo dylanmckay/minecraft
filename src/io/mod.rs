@@ -5,6 +5,7 @@ pub use self::packet::Packet;
 pub mod types;
 pub mod error;
 pub mod packet;
+pub mod mgr;
 
 pub type Buffer = ::std::io::Cursor<Vec<u8>>;
 
