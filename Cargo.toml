@@ -6,6 +6,7 @@ authors = ["Dylan McKay <dylanmckay34@gmail.com>"]
 [dependencies]
 byteorder = "0.5.3"
 mio = "0.5.1"
+flate2 = "0.2.14"
 
 [[bin]]
 name = "client"

@@ -11,7 +11,7 @@ pub struct Cooked
     raw_builder: builder::Raw,
 
     /// If packets are bigger than this, they will be compressed.
-    _compression_threshold: Option<usize>,
+    compression_threshold: Option<usize>,
 }
 
 impl Cooked
@@ -19,7 +19,7 @@ impl Cooked
     pub fn new() -> Self {
         Cooked {
             raw_builder: builder::Raw::new(),
-            _compression_threshold: None,
+            compression_threshold: None,
         }
     }
 
@@ -45,10 +45,23 @@ impl Cooked
         }
     }
 
+    pub fn is_compression_enabled(&self) -> bool { self.compression_threshold.is_some() }
+
     /// Preprocess a packet before it gets lost. Some packets
     /// change the way we parse packets (i.e. setting compression).
-    fn preprocess_packet(&mut self, _packet: &Packet) {
-        // Nothing we need to do just yet.
+    fn preprocess_packet(&mut self, packet: &Packet) {
+        match *packet {
+            Packet::SetCompression(ref packet) => {
+                self.compression_threshold = if packet.threshold.0 >= 0 {
+                    Some(packet.threshold.0 as _)
+                } else {
+                    None
+                };
+            },
+            _ => {
+                // We don't care about any other packets.
+            }
+        }
     }
 
     fn make_packet(&mut self,
@@ -64,14 +77,27 @@ impl Cooked
         -> packet::raw::Packet {
         let mut cursor = Cursor::new(packet.retrieved_data);
 
-        let packet_id = VarInt::read(&mut cursor).unwrap();
-        let packet_data: Vec<u8> = cursor.bytes().map(|a| a.unwrap()).collect();
+        if self.is_compression_enabled() {
+            let data_length = VarInt::read(&mut cursor).unwrap();
+            let packet_id = VarInt::read(&mut cursor).unwrap();
+            let packet_data: Vec<u8> = cursor.bytes().map(|a| a.unwrap()).collect();
 
-        packet::raw::Packet::Uncompressed(packet::raw::UncompressedPacket {
-            length: VarInt(packet.size as _),
-            packet_id: packet_id,
-            data: packet_data,
-        })
+            packet::raw::Packet::Compressed(packet::raw::CompressedPacket {
+                packet_length: VarInt(packet.size as _),
+                data_length: data_length,
+                packet_id: packet_id,
+                data: packet_data,
+            })
+        } else {
+            let packet_id = VarInt::read(&mut cursor).unwrap();
+            let packet_data: Vec<u8> = cursor.bytes().map(|a| a.unwrap()).collect();
+
+            packet::raw::Packet::Uncompressed(packet::raw::UncompressedPacket {
+                length: VarInt(packet.size as _),
+                packet_id: packet_id,
+                data: packet_data,
+            })
+        }
     }
 }
 

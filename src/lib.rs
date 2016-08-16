@@ -7,4 +7,5 @@ pub mod game;
 
 extern crate byteorder;
 extern crate mio;
+extern crate flate2;
 
