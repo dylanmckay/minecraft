@@ -92,7 +92,7 @@ impl Client
         self.server_stream.flush().expect("error while flushing");
     }
 
-    fn handle_packet(&mut self, packet: &Packet) {
+    fn handle_packet(&mut self, _packet: &Packet) {
     }
 }
 
@@ -119,11 +119,5 @@ impl Handler for Client {
 
         event_loop.timeout_ms(TICK_TIMER, TICK_MS).expect("failed to set up tick timer");
     }
-}
-
-pub fn run() {
-    let mut client = Client::connect("127.0.0.1:25565");
-    client.login();
-    client.run();
 }
 
