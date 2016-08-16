@@ -1,6 +1,5 @@
 use io::types::*;
-use io::packet;
-use io::Error;
+use io::{packet, Error, Buffer};
 use std;
 
 pub const STATE_STATUS: VarInt = VarInt(1);
@@ -28,6 +27,15 @@ impl packet::Realization for Handshake
             server_port: u16::read(&mut cursor)?,
             next_state: VarInt::read(&mut cursor)?,
         })
+    }
+
+    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
+        self.protocol_version.write(buffer)?;
+        self.server_address.write(buffer)?;
+        self.server_port.write(buffer)?;
+        self.next_state.write(buffer)?;
+
+        Ok(())
     }
 }
 

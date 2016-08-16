@@ -1,6 +1,5 @@
 use io::types::*;
-use io::packet;
-use io::Error;
+use io::{packet, Error, Buffer};
 use std;
 
 #[derive(Clone)]
@@ -19,6 +18,12 @@ impl packet::Realization for LoginStart
         Ok(LoginStart {
             username: String::read(&mut cursor)?,
         })
+    }
+
+    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
+        self.username.write(buffer)?;
+
+        Ok(())
     }
 }
 

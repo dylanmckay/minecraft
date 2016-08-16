@@ -1,5 +1,5 @@
 use io::types::*;
-use io::{packet, Error};
+use io::{packet, Error, Buffer};
 use std;
 
 #[derive(Clone)]
@@ -22,6 +22,14 @@ impl packet::Realization for EncryptionRequest
             public_key: ByteArray::read(&mut cursor)?,
             verify_token: ByteArray::read(&mut cursor)?,
         })
+    }
+
+    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
+        self.server_id.write(buffer)?;
+        self.public_key.write(buffer)?;
+        self.verify_token.write(buffer)?;
+
+        Ok(())
     }
 }
 
