@@ -3,9 +3,8 @@ pub use self::varint::VarInt;
 pub mod string;
 pub mod varint;
 
+use io::Buffer;
 use std::io;
-
-pub type Buffer = io::Cursor<Vec<u8>>;
 
 pub trait Type : Clone
 {

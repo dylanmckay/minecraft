@@ -1,5 +1,4 @@
-use Type;
-use types::Buffer;
+use io::{Type, Buffer};
 use std::io;
 
 /// A variable sized int.

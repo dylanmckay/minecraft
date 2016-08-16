@@ -1,5 +1,5 @@
-use Type;
-use types::{Buffer, VarInt};
+use io::{Buffer, Type};
+use io::types::VarInt;
 use std::io;
 
 impl<'a> Type for String
