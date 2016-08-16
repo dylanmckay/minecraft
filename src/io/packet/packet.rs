@@ -5,9 +5,9 @@ use game;
 
 pub enum Packet
 {
-    /// Packet ID `0x00`
     Handshake(Handshake),
     LoginStart(LoginStart),
+    EncryptionRequest(EncryptionRequest),
 }
 
 impl Packet
@@ -41,6 +41,9 @@ mod parse {
         match data.packet_id {
             types::LoginStart::PACKET_ID => {
                 Ok(Packet::LoginStart(types::LoginStart::parse(data.data)?))
+            },
+            types::EncryptionRequest::PACKET_ID => {
+                Ok(Packet::EncryptionRequest(types::EncryptionRequest::parse(data.data)?))
             },
             _ => unimplemented!(),
         }

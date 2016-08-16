@@ -8,6 +8,8 @@ pub mod composite;
 
 use io::{Buffer, Error};
 
+pub type ByteArray = Composite<u8>;
+
 pub trait Type : Clone
 {
     fn read(read: &mut Buffer) -> Result<Self, Error>;
