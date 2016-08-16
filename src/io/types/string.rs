@@ -1,10 +1,9 @@
-use io::{Buffer, Type};
+use io::{Buffer, Type, Error};
 use io::types::VarInt;
-use std::io;
 
 impl<'a> Type for String
 {
-    fn read(buffer: &mut Buffer) -> io::Result<Self> {
+    fn read(buffer: &mut Buffer) -> Result<Self, Error> {
         use std::io::Read;
 
         let byte_count = VarInt::read(buffer)?.0;
@@ -26,7 +25,7 @@ impl<'a> Type for String
         }
     }
 
-    fn write(&self, buffer: &mut Buffer) -> io::Result<()> {
+    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
         use std::io::Write;
 
         let byte_count = VarInt(self.chars().map(|c| c.len_utf16() as i32).sum());

@@ -1,4 +1,4 @@
-use io::{Type, Buffer};
+use io::{Type, Buffer, Error};
 use std::io;
 
 /// A variable sized int.
@@ -7,7 +7,7 @@ pub struct VarInt(pub i32);
 
 impl Type for VarInt
 {
-    fn read(buffer: &mut Buffer) -> io::Result<Self> {
+    fn read(buffer: &mut Buffer) -> Result<Self, Error> {
         use integer_encoding::VarInt;
         use std::io::Seek;
 
@@ -17,7 +17,7 @@ impl Type for VarInt
         Ok(VarInt(i))
     }
 
-    fn write(&self, buffer: &mut Buffer) -> io::Result<()> {
+    fn write(&self, buffer: &mut Buffer) -> Result<(), Error> {
         use std::io::Write;
         use integer_encoding::VarInt;
 
