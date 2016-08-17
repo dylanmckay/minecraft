@@ -1,5 +1,5 @@
-use io::packet::raw;
-use io::types::{Type, VarInt};
+use protocol::packet::raw;
+use protocol::types::{Type, VarInt};
 
 use std::io::{Cursor, Write, Read};
 use flate2::read::{ZlibEncoder, ZlibDecoder};

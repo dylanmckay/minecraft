@@ -1,5 +1,5 @@
-use io::{Error, Type};
-use io::types::VarInt;
+use protocol::{Error, Type};
+use protocol::types::VarInt;
 use std::io::{Read, Write, Cursor};
 use std;
 

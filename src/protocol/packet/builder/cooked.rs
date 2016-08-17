@@ -1,6 +1,6 @@
-use io::{Packet, Error, GameState, connection};
-use io::packet::{self, builder};
-use io::types::*;
+use protocol::{Packet, Error, GameState, connection};
+use protocol::packet::{self, builder};
+use protocol::types::*;
 
 use std::io::{Read, Cursor};
 

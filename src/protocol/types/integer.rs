@@ -1,4 +1,4 @@
-use io::{Type, Error};
+use protocol::{Type, Error};
 use std::io::{Read, Write};
 
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};

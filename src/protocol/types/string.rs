@@ -1,5 +1,5 @@
-use io::{Type, Error};
-use io::types::VarInt;
+use protocol::{Type, Error};
+use protocol::types::VarInt;
 use std::io::{Read, Write};
 
 impl<'a> Type for String

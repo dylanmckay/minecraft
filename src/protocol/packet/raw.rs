@@ -1,4 +1,4 @@
-use io::types::VarInt;
+use protocol::types::VarInt;
 
 /// A raw packet.
 #[derive(Debug)]

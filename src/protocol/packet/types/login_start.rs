@@ -1,5 +1,5 @@
-use io::types::*;
-use io::{packet, Error};
+use protocol::types::*;
+use protocol::{packet, Error};
 use std::io::{Read, Write};
 
 #[derive(Clone, Debug)]

@@ -1,12 +1,12 @@
 use std::io::{Read, Write};
-use io::{self, types, packet, Packet, Error};
+use protocol::{self, types, packet, Packet, Error};
 
 use mio::*;
 use mio::tcp::TcpStream;
 
 use std;
 
-const INITIAL_STATE: io::GameState = io::GameState::Handshake;
+const INITIAL_STATE: protocol::GameState = protocol::GameState::Handshake;
 const CLIENT: Token = Token(1);
 const TICK_TIMER: Token = Token(2);
 
@@ -14,10 +14,10 @@ const TICK_MS: u64 = 50;
 
 pub struct Client
 {
-    pub current_state: io::GameState,
+    pub current_state: protocol::GameState,
 
     server_stream: TcpStream,
-    connection: io::Connection,
+    connection: protocol::Connection,
 }
 
 impl Client
@@ -26,7 +26,7 @@ impl Client
         Client {
             current_state: INITIAL_STATE,
             server_stream: server_stream,
-            connection: io::Connection::new(packet::Source::Server),
+            connection: protocol::Connection::new(packet::Source::Server),
         }
     }
 
@@ -51,7 +51,7 @@ impl Client
             next_state: packet::types::handshake::STATE_LOGIN,
         });
 
-        self.current_state = io::GameState::Login;
+        self.current_state = protocol::GameState::Login;
 
         self.send_packet(&packet::LoginStart { username: "dylan".to_owned() });
     }

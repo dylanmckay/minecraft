@@ -6,7 +6,7 @@ pub mod integer;
 pub mod varint;
 pub mod composite;
 
-use io::Error;
+use protocol::Error;
 
 pub type ByteArray = Composite<u8>;
 

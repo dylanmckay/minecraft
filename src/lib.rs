@@ -2,7 +2,7 @@
 #![feature(associated_consts)]
 #![feature(conservative_impl_trait)]
 
-pub mod io;
+pub mod protocol;
 pub mod game;
 
 extern crate byteorder;

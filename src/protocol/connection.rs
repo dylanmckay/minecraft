@@ -1,5 +1,5 @@
-use io::{Packet, Error, GameState};
-use io::packet::{self, builder};
+use protocol::{Packet, Error, GameState};
+use protocol::packet::{self, builder};
 
 #[derive(Clone,Debug)]
 pub struct Connection

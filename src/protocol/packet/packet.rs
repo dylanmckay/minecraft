@@ -1,6 +1,6 @@
-use io::packet::{self, Source, Realization};
-use io::packet::types::*;
-use io::{Error, GameState};
+use protocol::packet::{self, Source, Realization};
+use protocol::packet::types::*;
+use protocol::{Error, GameState};
 
 use std::io::prelude::*;
 use std::io::Cursor;
@@ -65,10 +65,10 @@ impl Packet
 }
 
 mod parse {
-    use io::packet::{self, types, Realization, Source};
+    use protocol::packet::{self, types, Realization, Source};
     use std::io::Cursor;
     use super::Packet;
-    use io::Error;
+    use protocol::Error;
 
     pub fn handshake_state(source: Source, data: packet::Data) -> Result<Packet, Error> {
         let mut packet_payload = Cursor::new(data.payload.clone());

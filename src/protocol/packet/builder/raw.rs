@@ -1,5 +1,5 @@
-use io::Type;
-use io::types::VarInt;
+use protocol::Type;
+use protocol::types::VarInt;
 use std::collections::VecDeque;
 use std::io::Cursor;
 use std::cmp;
