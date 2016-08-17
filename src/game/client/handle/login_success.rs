@@ -1,10 +1,15 @@
-use game::Client;
+use game::{client, Client};
 use protocol::packet::LoginSuccess;
-use protocol;
 
-pub fn login_success(client: &mut Client, _packet: &LoginSuccess) {
-    client.current_state = protocol::GameState::Play;
+pub fn login_success(client: &mut Client, packet: &LoginSuccess) {
+    let user_information = client::proto_game::UserInformation {
+        uuid: packet.uuid.clone(),
+        username: packet.username.clone(),
+    };
 
-    // FIXME: set username/uuid
+
+    client.state = client::State::ProtoGame(client::ProtoGame::PendingJoin {
+        user_information: user_information,
+    });
 }
 

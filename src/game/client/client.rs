@@ -1,13 +1,12 @@
 use std::io::{Read, Write};
 use protocol::{self, types, packet, Packet, Error};
-use game::{self, client};
+use game::client;
 
 use mio::*;
 use mio::tcp::TcpStream;
 
 use std;
 
-const INITIAL_STATE: protocol::GameState = protocol::GameState::Handshake;
 const CLIENT: Token = Token(1);
 const TICK_TIMER: Token = Token(2);
 
@@ -15,8 +14,7 @@ const TICK_MS: u64 = 50;
 
 pub struct Client
 {
-    pub current_state: protocol::GameState,
-    pub context: game::Context,
+    pub state: client::State,
 
     server_stream: TcpStream,
     connection: protocol::Connection,
@@ -26,8 +24,7 @@ impl Client
 {
     pub fn new(server_stream: TcpStream) -> Self {
         Client {
-            current_state: INITIAL_STATE,
-            context: game::Context::new(),
+            state: client::State::initial(),
             server_stream: server_stream,
             connection: protocol::Connection::new(packet::Source::Server),
         }
@@ -41,6 +38,11 @@ impl Client
     }
 
     pub fn login(&mut self) {
+        if let client::State::ProtoGame(client::ProtoGame::HandshakePending) = self.state {
+        } else {
+            panic!("too late to log in");
+        }
+
         // FIXME: this code is commented out because it would sporadically give 'socket not
         // connected' errors.
         // let server_addr = self.server_stream.peer_addr().expect("no socket addresses found");
@@ -54,13 +56,15 @@ impl Client
             next_state: packet::types::handshake::STATE_LOGIN,
         });
 
-        self.current_state = protocol::GameState::Login;
+        self.state = client::State::ProtoGame(client::ProtoGame::PendingLoginStart);
 
         self.send_packet(&packet::LoginStart { username: "dylan".to_owned() });
+
+        self.state = client::State::ProtoGame(client::ProtoGame::PendingLoginResponse);
     }
 
     pub fn tick(&mut self) {
-        while let Some(result) = self.connection.take_packet(self.current_state) {
+        while let Some(result) = self.connection.take_packet(self.state.protocol_state()) {
             match result {
                 Ok(ref packet) => self.handle_packet(packet),
                 Err(e) => match e {
