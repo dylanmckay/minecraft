@@ -8,6 +8,7 @@ use std::cmp;
 const MAXIMUM_VARINT_SIZE: usize = 5;
 
 /// Builds raw packets.
+#[derive(Clone, Debug)]
 pub struct Raw
 {
     /// The buffer of unprocessed bytes.

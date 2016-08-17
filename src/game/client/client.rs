@@ -1,6 +1,6 @@
 use game::State;
 use std::io::{Read, Write};
-use io::{types, packet, Packet, Error};
+use io::{self, types, packet, Packet, Error};
 
 use mio::*;
 use mio::tcp::TcpStream;
@@ -18,7 +18,7 @@ pub struct Client
     pub current_state: State,
 
     server_stream: TcpStream,
-    packet_builder: packet::builder::Cooked,
+    connection: io::Connection,
 }
 
 impl Client
@@ -27,7 +27,7 @@ impl Client
         Client {
             current_state: INITIAL_STATE,
             server_stream: server_stream,
-            packet_builder: packet::builder::Cooked::new(),
+            connection: io::Connection::new(packet::Source::Server),
         }
     }
 
@@ -58,7 +58,7 @@ impl Client
     }
 
     pub fn tick(&mut self) {
-        while let Some(result) = self.packet_builder.take_packet(packet::Source::Server, self.current_state) {
+        while let Some(result) = self.connection.take_packet(self.current_state) {
             match result {
                 Ok(ref packet) => self.handle_packet(packet),
                 Err(e) => match e {
@@ -107,7 +107,7 @@ impl Handler for Client {
                     let mut buffer = [0u8; 10000];
                     let bytes_read = self.server_stream.read(&mut buffer).unwrap();
 
-                    self.packet_builder.give_bytes(&buffer[0..bytes_read]);
+                    self.connection.give_bytes(&buffer[0..bytes_read]);
                 }
             }
             _ => panic!("unexpected token"),

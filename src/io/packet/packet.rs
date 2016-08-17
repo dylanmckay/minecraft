@@ -3,7 +3,9 @@ use io::packet::types::*;
 use io::Error;
 use game;
 
+use std::io::prelude::*;
 use std::io::Cursor;
+use std;
 
 #[derive(Clone, Debug)]
 pub enum Packet
@@ -26,6 +28,11 @@ impl Packet
             game::State::Login =>self::parse::login_state(source, data),
             game::State::Play => unimplemented!(),
         }
+    }
+
+    pub fn write(&self, _read: &mut Read) -> Result<(), std::io::Error> {
+        unimplemented!();
+        // let raw_packet = self.clone().into_data().into_raw();
     }
 
     pub fn into_data(self) -> packet::Data {
