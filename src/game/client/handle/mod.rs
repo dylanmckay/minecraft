@@ -5,6 +5,7 @@ pub use self::server_difficulty::server_difficulty;
 pub use self::spawn_position::spawn_position;
 pub use self::player_abilities::player_abilities;
 pub use self::entity_status::entity_status;
+pub use self::held_item_change::held_item_change;
 
 pub mod login_success;
 pub mod join_game;
@@ -13,6 +14,7 @@ pub mod server_difficulty;
 pub mod spawn_position;
 pub mod player_abilities;
 pub mod entity_status;
+pub mod held_item_change;
 
 #[derive(Clone, Debug)]
 pub enum Error
@@ -33,6 +35,7 @@ pub fn packet(client: &mut ::game::Client, packet: &::protocol::Packet)
         Packet::SpawnPosition(ref packet) => self::spawn_position(client, packet),
         Packet::PlayerAbilities(ref packet) => self::player_abilities(client, packet),
         Packet::EntityStatus(ref packet) => self::entity_status(client, packet),
+        Packet::HeldItemChange(ref packet) => self::held_item_change(client, packet),
         _ => panic!("don't know how to handle this packet yet: {:#?}", packet),
     }
 }
