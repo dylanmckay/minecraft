@@ -1,6 +1,7 @@
 use protocol;
 
 /// A game which hasn't quite begun.
+#[derive(Clone,Debug)]
 pub enum ProtoGame
 {
     /// A handshake needs to be sent to the
@@ -28,12 +29,14 @@ pub enum ProtoGame
     },
 }
 
+#[derive(Clone,Debug)]
 pub struct UserInformation
 {
     pub uuid: String,
     pub username: String,
 }
 
+#[derive(Clone,Debug)]
 pub struct PlayerInformation
 {
     pub entity_id: i32,

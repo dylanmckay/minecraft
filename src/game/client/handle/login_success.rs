@@ -7,6 +7,7 @@ pub fn login_success(client: &mut Client, packet: &LoginSuccess) {
         username: packet.username.clone(),
     };
 
+    // FIXME: ensure that we are currently in the correct state
 
     client.state = client::State::ProtoGame(client::ProtoGame::PendingJoin {
         user_information: user_information,
