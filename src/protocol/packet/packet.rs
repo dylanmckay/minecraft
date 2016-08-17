@@ -10,6 +10,7 @@ use std;
 pub enum Packet
 {
     Handshake(Handshake),
+    Statistics(Statistics),
 
     LoginStart(LoginStart),
     LoginSuccess(LoginSuccess),
@@ -69,6 +70,7 @@ impl Packet
 
         handle_packet!(
             Handshake,
+            Statistics,
             LoginStart,
             LoginSuccess,
             JoinGame,
@@ -124,6 +126,7 @@ mod parse {
 
     pub fn play_state(source: Source, data: packet::Data) -> Result<Packet, Error> {
         handle_packets!(source, data;
+            Server => Statistics,
             Server => JoinGame,
             Server => PluginMessage,
             Server => ServerDifficulty,

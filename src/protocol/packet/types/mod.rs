@@ -1,4 +1,4 @@
-pub use self::handshake::Handshake;
+pub use self::handshake::{Handshake, Statistics};
 pub use self::login::{LoginStart, LoginSuccess};
 pub use self::encryption::{EncryptionRequest, EncryptionResponse};
 pub use self::compression::SetCompression;
@@ -9,7 +9,7 @@ pub use self::entity::EntityStatus;
 
 macro_rules! define_packet {
     ($id:expr => $name:ident; [
-         $( $field:ident: $ty:ident),+ ]) => {
+         $( $field:ident: $ty:ty),+ ]) => {
         #[derive(Clone, Debug)]
         pub struct $name
         {
@@ -25,11 +25,12 @@ macro_rules! define_packet {
 
             fn parse(read: &mut ::std::io::Read)
                 -> Result<Self, ::protocol::Error> {
+                #[allow(unused_imports)]
                 use ::protocol::types::*;
 
                 Ok($name {
                     $(
-                        $field: $ty::read(read)?,
+                        $field: ::protocol::Type::read(read)?,
                     )*
                 })
             }

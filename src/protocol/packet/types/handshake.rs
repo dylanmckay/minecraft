@@ -10,3 +10,7 @@ define_packet!(0x00 => Handshake; [
     next_state: VarInt
 ]);
 
+define_packet!(0x07 => Statistics; [
+    statistics: Composite<Statistic>
+]);
+
