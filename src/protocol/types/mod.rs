@@ -3,6 +3,7 @@ pub use self::composite::Composite;
 pub use self::position::Position;
 pub use self::aliases::*;
 pub use self::slot::Slot;
+pub use self::chat::Chat;
 pub use self::statistic::Statistic;
 
 pub mod string;
@@ -11,6 +12,7 @@ pub mod varint;
 pub mod composite;
 pub mod position;
 pub mod slot;
+pub mod chat;
 pub mod statistic;
 pub mod aliases;
 
