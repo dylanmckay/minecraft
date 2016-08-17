@@ -8,6 +8,7 @@ byteorder = "0.5.3"
 mio = "0.5.1"
 flate2 = "0.2.14"
 nalgebra = "0.8.2"
+hematite-nbt = "0.2.0"
 
 [[bin]]
 name = "client"
