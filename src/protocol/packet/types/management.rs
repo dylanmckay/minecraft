@@ -14,3 +14,7 @@ define_packet!(0x0D => ServerDifficulty; [
     difficulty: u8
 ]);
 
+define_packet!(0x43 => SpawnPosition; [
+    position: Position
+]);
+

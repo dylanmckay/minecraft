@@ -16,6 +16,7 @@ pub enum Packet
 
     JoinGame(JoinGame),
     ServerDifficulty(ServerDifficulty),
+    SpawnPosition(SpawnPosition),
 
     EncryptionRequest(EncryptionRequest),
     EncryptionResponse(EncryptionResponse),
@@ -67,6 +68,7 @@ impl Packet
             LoginSuccess,
             JoinGame,
             ServerDifficulty,
+            SpawnPosition,
             EncryptionRequest,
             EncryptionResponse,
             SetCompression,
@@ -117,6 +119,7 @@ mod parse {
             Server => JoinGame,
             Server => PluginMessage,
             Server => ServerDifficulty,
+            Server => SpawnPosition,
         )
     }
 }
