@@ -12,6 +12,7 @@ pub enum Packet
     Handshake(Handshake),
     LoginStart(LoginStart),
     LoginSuccess(LoginSuccess),
+    JoinGame(JoinGame),
     EncryptionRequest(EncryptionRequest),
     EncryptionResponse(EncryptionResponse),
     SetCompression(SetCompression),
@@ -57,6 +58,7 @@ impl Packet
             Handshake,
             LoginStart,
             LoginSuccess,
+            JoinGame,
             EncryptionRequest,
             EncryptionResponse,
             SetCompression
@@ -70,44 +72,41 @@ mod parse {
     use super::Packet;
     use protocol::Error;
 
-    pub fn handshake_state(source: Source, data: packet::Data) -> Result<Packet, Error> {
-        let mut packet_payload = Cursor::new(data.payload.clone());
+    macro_rules! handle_packets {
+        ( $s:expr, $data:expr; $( $source:ident => $ty:ident, )+ ) => {
+            {
+                let mut packet_payload = Cursor::new($data.payload.clone());
 
-        match (source, data.packet_id) {
-            (Source::Client, types::Handshake::PACKET_ID) => {
-                Ok(Packet::Handshake(types::Handshake::parse(&mut packet_payload)?))
-            },
-            _ => Err(Error::UnknownPacket(data)),
+                match ($s, $data.packet_id) {
+                    $( ( Source::$source, types::$ty::PACKET_ID) => {
+                        Ok(Packet::$ty(types::$ty::parse(&mut packet_payload)?))
+                    }, )*
+                    _ => Err(Error::UnknownPacket($data)),
+                }
+            }
         }
+    }
+
+    pub fn handshake_state(source: Source, data: packet::Data) -> Result<Packet, Error> {
+        handle_packets!(source, data;
+            Client => Handshake,
+        )
     }
 
     pub fn login_state(source: Source, data: packet::Data) -> Result<Packet, Error> {
-        let mut packet_payload = Cursor::new(data.payload.clone());
-
-        match (source, data.packet_id) {
-            (Source::Client, types::LoginStart::PACKET_ID) => {
-                Ok(Packet::LoginStart(types::LoginStart::parse(&mut packet_payload)?))
-            },
-            (Source::Server, types::EncryptionRequest::PACKET_ID) => {
-                Ok(Packet::EncryptionRequest(types::EncryptionRequest::parse(&mut packet_payload)?))
-            },
-            (Source::Client, types::EncryptionResponse::PACKET_ID) => {
-                Ok(Packet::EncryptionResponse(types::EncryptionResponse::parse(&mut packet_payload)?))
-            },
-            (Source::Server, types::LoginSuccess::PACKET_ID) => {
-                Ok(Packet::LoginSuccess(types::LoginSuccess::parse(&mut packet_payload)?))
-            },
-            (Source::Server, types::SetCompression::PACKET_ID) => {
-                Ok(Packet::SetCompression(types::SetCompression::parse(&mut packet_payload)?))
-            },
-            _ => Err(Error::UnknownPacket(data)),
-        }
+        handle_packets!(source, data;
+            Client => LoginStart,
+            Server => LoginSuccess,
+            Server => SetCompression,
+            Server => EncryptionRequest,
+            Client => EncryptionResponse,
+        )
     }
 
     pub fn play_state(source: Source, data: packet::Data) -> Result<Packet, Error> {
-        match (source, data.packet_id) {
-            _ => Err(Error::UnknownPacket(data)),
-        }
+        handle_packets!(source, data;
+            Server => JoinGame,
+        )
     }
 }
 
