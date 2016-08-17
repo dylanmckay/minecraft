@@ -1,5 +1,6 @@
 use game;
 use protocol;
+use na;
 
 /// A game which hasn't quite begun.
 #[derive(Clone,Debug)]
@@ -49,6 +50,7 @@ pub struct GameInformation
     pub player_information: PlayerInformation,
 
     pub difficulty: Option<game::Difficulty>,
+    pub spawn_position: Option<na::Vector3<f32>>,
 }
 
 impl ProtoGame

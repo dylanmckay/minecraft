@@ -31,3 +31,10 @@ impl Type for Position {
     }
 }
 
+impl Into<::na::Vector3<f32>> for Position
+{
+    fn into(self) -> ::na::Vector3<f32> {
+        ::na::Vector3::new(self.x as _, self.y as _, self.z as _)
+    }
+}
+

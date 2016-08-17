@@ -2,11 +2,13 @@ pub use self::login_success::login_success;
 pub use self::join_game::join_game;
 pub use self::plugin_message::plugin_message;
 pub use self::server_difficulty::server_difficulty;
+pub use self::spawn_position::spawn_position;
 
 pub mod login_success;
 pub mod join_game;
 pub mod plugin_message;
 pub mod server_difficulty;
+pub mod spawn_position;
 
 #[derive(Clone, Debug)]
 pub enum Error
@@ -24,6 +26,7 @@ pub fn packet(client: &mut ::game::Client, packet: &::protocol::Packet)
         Packet::JoinGame(ref packet) => self::join_game(client, packet),
         Packet::PluginMessage(ref packet) => self::plugin_message(client, packet),
         Packet::ServerDifficulty(ref packet) => self::server_difficulty(client, packet),
+        Packet::SpawnPosition(ref packet) => self::spawn_position(client, packet),
         _ => panic!("don't know how to handle this packet yet: {:#?}", packet),
     }
 }

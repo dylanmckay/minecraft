@@ -13,6 +13,7 @@ pub fn join_game(client: &mut Client, packet: &JoinGame)
                 user_information: user_information.clone(),
                 player_information: player_information,
                 difficulty: None,
+                spawn_position: None,
             }
         })
     } else {
