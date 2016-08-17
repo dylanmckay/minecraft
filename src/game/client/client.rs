@@ -1,6 +1,6 @@
 use std::io::{Read, Write};
 use protocol::{self, types, packet, Packet, Error};
-use game::client;
+use game::{self, client};
 
 use mio::*;
 use mio::tcp::TcpStream;
@@ -16,6 +16,7 @@ const TICK_MS: u64 = 50;
 pub struct Client
 {
     pub current_state: protocol::GameState,
+    pub context: game::Context,
 
     server_stream: TcpStream,
     connection: protocol::Connection,
@@ -26,6 +27,7 @@ impl Client
     pub fn new(server_stream: TcpStream) -> Self {
         Client {
             current_state: INITIAL_STATE,
+            context: game::Context::new(),
             server_stream: server_stream,
             connection: protocol::Connection::new(packet::Source::Server),
         }
