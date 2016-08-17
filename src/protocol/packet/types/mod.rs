@@ -4,7 +4,7 @@ pub use self::encryption::{EncryptionRequest, EncryptionResponse};
 pub use self::compression::SetCompression;
 pub use self::management::{JoinGame, ServerDifficulty, SpawnPosition};
 pub use self::messaging::PluginMessage;
-pub use self::player::PlayerAbilities;
+pub use self::player::{PlayerAbilities, HeldItemChange};
 
 macro_rules! define_packet {
     ($id:expr => $name:ident; [
