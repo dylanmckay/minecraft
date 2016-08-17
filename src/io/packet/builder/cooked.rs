@@ -69,33 +69,31 @@ impl Cooked
                    game_state: game::State,
                    packet: builder::raw::PartialPacket)
         -> Result<Packet, Error> {
-        let data = packet::Data::new(self.make_raw_packet(packet));
+        let data = packet::Data::from_raw(self.make_raw_packet(packet));
         Packet::parse(source, game_state, data)
     }
 
     fn make_raw_packet(&mut self, packet: builder::raw::PartialPacket)
         -> packet::raw::Packet {
-        let mut cursor = Cursor::new(packet.retrieved_data);
+        let mut cursor = Cursor::new(packet.payload);
 
         if self.is_compression_enabled() {
             let data_length = VarInt::read(&mut cursor).unwrap();
-            let packet_id = VarInt::read(&mut cursor).unwrap();
             let packet_data: Vec<u8> = cursor.bytes().map(|a| a.unwrap()).collect();
 
             packet::raw::Packet::Compressed(packet::raw::CompressedPacket {
                 packet_length: VarInt(packet.size as _),
                 data_length: data_length,
-                packet_id: packet_id,
-                data: packet_data,
+                packet_data: packet_data,
             })
         } else {
             let packet_id = VarInt::read(&mut cursor).unwrap();
-            let packet_data: Vec<u8> = cursor.bytes().map(|a| a.unwrap()).collect();
+            let packet_payload: Vec<u8> = cursor.bytes().map(|a| a.unwrap()).collect();
 
             packet::raw::Packet::Uncompressed(packet::raw::UncompressedPacket {
                 length: VarInt(packet.size as _),
                 packet_id: packet_id,
-                data: packet_data,
+                payload: packet_payload,
             })
         }
     }

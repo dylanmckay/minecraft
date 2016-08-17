@@ -22,7 +22,7 @@ pub struct Raw
 pub struct PartialPacket
 {
     pub size: usize,
-    pub retrieved_data: Vec<u8>,
+    pub payload: Vec<u8>,
 }
 
 impl Raw
@@ -70,7 +70,7 @@ impl Raw
 
                     self.current_packet = Some(PartialPacket {
                         size: size as _,
-                        retrieved_data: Vec::new(),
+                        payload: Vec::new(),
                     });
 
                     self.process_current_packet();
@@ -98,7 +98,7 @@ impl Raw
                 new_bytes.push(self.byte_queue.pop_front().unwrap());
             }
 
-            packet.retrieved_data.extend(new_bytes.into_iter());
+            packet.payload.extend(new_bytes.into_iter());
         }
 
         if self.current_packet.as_ref().unwrap().is_complete() {
@@ -111,7 +111,7 @@ impl Raw
 impl PartialPacket
 {
     pub fn remaining_bytes(&self) -> usize {
-        self.size - self.retrieved_data.len()
+        self.size - self.payload.len()
     }
 
     pub fn is_complete(&self) -> bool {

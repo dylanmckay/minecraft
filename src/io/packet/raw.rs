@@ -15,7 +15,7 @@ pub struct UncompressedPacket
     /// Length of proceding data.
     pub length: VarInt,
     pub packet_id: VarInt,
-    pub data: Vec<u8>,
+    pub payload: Vec<u8>,
 }
 
 /// A [possibly] compressed packet.
@@ -29,10 +29,8 @@ pub struct CompressedPacket
     /// If the length is set to `0`, the remaining data is *not* compressed.
     pub data_length: VarInt,
 
-    /// Possibly zlib compressed packet ID.
-    pub packet_id: VarInt,
-    /// Possibly zlib compressed packet data.
-    pub data: Vec<u8>,
+    /// The possibly zlib compressed packet ID and data.
+    pub packet_data: Vec<u8>,
 }
 
 impl CompressedPacket

@@ -1,7 +1,9 @@
-use io::packet::{self, Source};
+use io::packet::{self, Source, Realization};
 use io::packet::types::*;
 use io::Error;
 use game;
+
+use std::io::Cursor;
 
 #[derive(Clone, Debug)]
 pub enum Packet
@@ -25,6 +27,35 @@ impl Packet
             game::State::Play => unimplemented!(),
         }
     }
+
+    pub fn into_data(self) -> packet::Data {
+        let mut buffer = Cursor::new(Vec::new());
+        macro_rules! handle_packet {
+            ( $( $ty:ident),* ) => {
+                match self {
+                    $(
+                        Packet::$ty(packet) => {
+                            packet.write_payload(&mut buffer).unwrap();
+                            packet::Data {
+                                packet_id: packet.packet_id(),
+                                payload: buffer.into_inner(),
+                            }
+                        },
+                    )+
+
+                }
+            }
+        };
+
+        handle_packet!(
+            Handshake,
+            LoginStart,
+            LoginSuccess,
+            EncryptionRequest,
+            EncryptionResponse,
+            SetCompression
+        )
+    }
 }
 
 mod parse {
@@ -34,34 +65,34 @@ mod parse {
     use io::Error;
 
     pub fn handshake_state(source: Source, data: packet::Data) -> Result<Packet, Error> {
-        let mut packet_data = Cursor::new(data.data.clone());
+        let mut packet_payload = Cursor::new(data.payload.clone());
 
         match (source, data.packet_id) {
             (Source::Client, types::Handshake::PACKET_ID) => {
-                Ok(Packet::Handshake(types::Handshake::parse(&mut packet_data)?))
+                Ok(Packet::Handshake(types::Handshake::parse(&mut packet_payload)?))
             },
             _ => Err(Error::UnknownPacket(data)),
         }
     }
 
     pub fn login_state(source: Source, data: packet::Data) -> Result<Packet, Error> {
-        let mut packet_data = Cursor::new(data.data.clone());
+        let mut packet_payload = Cursor::new(data.payload.clone());
 
         match (source, data.packet_id) {
             (Source::Client, types::LoginStart::PACKET_ID) => {
-                Ok(Packet::LoginStart(types::LoginStart::parse(&mut packet_data)?))
+                Ok(Packet::LoginStart(types::LoginStart::parse(&mut packet_payload)?))
             },
             (Source::Server, types::EncryptionRequest::PACKET_ID) => {
-                Ok(Packet::EncryptionRequest(types::EncryptionRequest::parse(&mut packet_data)?))
+                Ok(Packet::EncryptionRequest(types::EncryptionRequest::parse(&mut packet_payload)?))
             },
             (Source::Client, types::EncryptionResponse::PACKET_ID) => {
-                Ok(Packet::EncryptionResponse(types::EncryptionResponse::parse(&mut packet_data)?))
+                Ok(Packet::EncryptionResponse(types::EncryptionResponse::parse(&mut packet_payload)?))
             },
             (Source::Server, types::LoginSuccess::PACKET_ID) => {
-                Ok(Packet::LoginSuccess(types::LoginSuccess::parse(&mut packet_data)?))
+                Ok(Packet::LoginSuccess(types::LoginSuccess::parse(&mut packet_payload)?))
             },
             (Source::Server, types::SetCompression::PACKET_ID) => {
-                Ok(Packet::SetCompression(types::SetCompression::parse(&mut packet_data)?))
+                Ok(Packet::SetCompression(types::SetCompression::parse(&mut packet_payload)?))
             },
             _ => Err(Error::UnknownPacket(data)),
         }
