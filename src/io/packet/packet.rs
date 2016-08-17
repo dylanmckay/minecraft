@@ -1,7 +1,6 @@
 use io::packet::{self, Source, Realization};
 use io::packet::types::*;
-use io::Error;
-use game;
+use io::{Error, GameState};
 
 use std::io::prelude::*;
 use std::io::Cursor;
@@ -20,13 +19,13 @@ pub enum Packet
 
 impl Packet
 {
-    pub fn parse(source: Source, current_state: game::State, data: packet::Data)
+    pub fn parse(source: Source, current_state: GameState, data: packet::Data)
         -> Result<Self, Error> {
         match current_state {
-            game::State::Handshake => self::parse::handshake_state(source, data),
-            game::State::Status => unimplemented!(),
-            game::State::Login =>self::parse::login_state(source, data),
-            game::State::Play => unimplemented!(),
+            GameState::Handshake => self::parse::handshake_state(source, data),
+            GameState::Status => unimplemented!(),
+            GameState::Login =>self::parse::login_state(source, data),
+            GameState::Play => unimplemented!(),
         }
     }
 

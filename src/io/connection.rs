@@ -1,6 +1,5 @@
-use io::{Packet, Error};
+use io::{Packet, Error, GameState};
 use io::packet::{self, builder};
-use game;
 
 #[derive(Clone,Debug)]
 pub struct Connection
@@ -42,7 +41,7 @@ impl Connection
         }
     }
 
-    pub fn take_packet(&mut self, game_state: game::State)
+    pub fn take_packet(&mut self, game_state: GameState)
         -> Option<Result<Packet, Error>> {
         let result = self.builder.take_packet(&self.state, game_state);
 

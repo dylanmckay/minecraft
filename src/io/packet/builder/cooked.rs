@@ -1,7 +1,6 @@
-use io::{Packet, Error, connection};
+use io::{Packet, Error, GameState, connection};
 use io::packet::{self, builder};
 use io::types::*;
-use game;
 
 use std::io::{Read, Cursor};
 
@@ -28,7 +27,7 @@ impl Cooked
     /// Takes a packet off of the queue.
     pub fn take_packet(&mut self,
                        connection_state: &connection::State,
-                       game_state: game::State) -> Option<Result<Packet, Error>> {
+                       game_state: GameState) -> Option<Result<Packet, Error>> {
         if let Some(raw_packet) = self.raw_builder.take_packet() {
             let packet = match self.make_packet(connection_state, game_state, raw_packet) {
                 Ok(p) => p,
@@ -43,7 +42,7 @@ impl Cooked
 
     fn make_packet(&mut self,
                    connection_state: &connection::State,
-                   game_state: game::State,
+                   game_state: GameState,
                    packet: builder::raw::PartialPacket)
         -> Result<Packet, Error> {
         let data = packet::Data::from_raw(self.make_raw_packet(connection_state, packet));

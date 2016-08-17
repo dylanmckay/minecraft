@@ -1,6 +1,6 @@
 
 #[derive(Copy,Clone,Debug,PartialEq,Eq)]
-pub enum State
+pub enum GameState
 {
     Handshake,
     Status,
