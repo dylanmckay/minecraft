@@ -10,3 +10,7 @@ define_packet!(0x23 => JoinGame; [
     reduced_debug_info: bool
 ]);
 
+define_packet!(0x0D => ServerDifficulty; [
+    difficulty: u8
+]);
+

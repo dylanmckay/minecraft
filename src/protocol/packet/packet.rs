@@ -15,6 +15,7 @@ pub enum Packet
     LoginSuccess(LoginSuccess),
 
     JoinGame(JoinGame),
+    ServerDifficulty(ServerDifficulty),
 
     EncryptionRequest(EncryptionRequest),
     EncryptionResponse(EncryptionResponse),
@@ -65,6 +66,7 @@ impl Packet
             LoginStart,
             LoginSuccess,
             JoinGame,
+            ServerDifficulty,
             EncryptionRequest,
             EncryptionResponse,
             SetCompression,
@@ -114,6 +116,7 @@ mod parse {
         handle_packets!(source, data;
             Server => JoinGame,
             Server => PluginMessage,
+            Server => ServerDifficulty,
         )
     }
 }

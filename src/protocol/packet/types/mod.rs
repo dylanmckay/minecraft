@@ -2,7 +2,7 @@ pub use self::handshake::Handshake;
 pub use self::login::{LoginStart, LoginSuccess};
 pub use self::encryption::{EncryptionRequest, EncryptionResponse};
 pub use self::compression::SetCompression;
-pub use self::management::JoinGame;
+pub use self::management::{JoinGame, ServerDifficulty};
 pub use self::messaging::PluginMessage;
 
 macro_rules! define_packet {
