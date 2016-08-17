@@ -1,5 +1,6 @@
 use std::io::{Read, Write};
 use protocol::{self, types, packet, Packet, Error};
+use game::client;
 
 use mio::*;
 use mio::tcp::TcpStream;
@@ -62,7 +63,7 @@ impl Client
                 Ok(ref packet) => self.handle_packet(packet),
                 Err(e) => match e {
                     Error::UnknownPacket(ref data) => {
-                        println!("unknown packet id: {}", data.packet_id.0);
+                        println!("unknown packet id: {:#x}", data.packet_id.0);
                     },
                     _ => {
                         panic!("unexpected error: {:#?}", e);
@@ -91,7 +92,8 @@ impl Client
         self.server_stream.flush().expect("error while flushing");
     }
 
-    fn handle_packet(&mut self, _packet: &Packet) {
+    fn handle_packet(&mut self, packet: &Packet) {
+        client::handle::packet(self, packet)
     }
 }
 

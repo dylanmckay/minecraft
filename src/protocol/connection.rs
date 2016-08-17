@@ -46,9 +46,7 @@ impl Connection
         let result = self.builder.take_packet(&self.state, game_state);
 
         if let Some(Ok(packet)) = result {
-            self.state.preprocess_packet(&packet);
-
-            Some(Ok(packet))
+            self.state.preprocess_packet(packet).map(|p| Ok(p))
         } else {
             result
         }
@@ -71,18 +69,18 @@ impl State
 
     /// Preprocess a packet before we retrieve it. Some packets
     /// change the way we parse packets (i.e. setting compression).
-    fn preprocess_packet(&mut self, packet: &Packet) {
-        match *packet {
+    fn preprocess_packet(&mut self, packet: Packet) -> Option<Packet> {
+        match packet {
             Packet::SetCompression(ref packet) => {
                 self.compression = if packet.threshold.0 >= 0 {
                     Compression::Enabled { threshold: packet.threshold.0 as _ }
                 } else {
                     Compression::Disabled
                 };
+
+                None
             },
-            _ => {
-                // We don't care about any other packets.
-            }
+            p => Some(p),
         }
     }
 }

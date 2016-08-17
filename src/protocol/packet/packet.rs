@@ -25,7 +25,7 @@ impl Packet
             GameState::Handshake => self::parse::handshake_state(source, data),
             GameState::Status => unimplemented!(),
             GameState::Login =>self::parse::login_state(source, data),
-            GameState::Play => unimplemented!(),
+            GameState::Play => self::parse::play_state(source, data),
         }
     }
 
@@ -100,6 +100,12 @@ mod parse {
             (Source::Server, types::SetCompression::PACKET_ID) => {
                 Ok(Packet::SetCompression(types::SetCompression::parse(&mut packet_payload)?))
             },
+            _ => Err(Error::UnknownPacket(data)),
+        }
+    }
+
+    pub fn play_state(source: Source, data: packet::Data) -> Result<Packet, Error> {
+        match (source, data.packet_id) {
             _ => Err(Error::UnknownPacket(data)),
         }
     }
