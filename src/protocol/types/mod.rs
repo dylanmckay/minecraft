@@ -1,10 +1,12 @@
 pub use self::varint::VarInt;
 pub use self::composite::Composite;
+pub use self::aliases::*;
 
 pub mod string;
 pub mod integer;
 pub mod varint;
 pub mod composite;
+pub mod aliases;
 
 use protocol::Error;
 
