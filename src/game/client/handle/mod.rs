@@ -23,6 +23,7 @@ pub enum Error
 {
     IncorrectState { expected_state: &'static str },
     EnumDecodingError(::game::enums::DecodingError),
+    UuidParseError(::uuid::ParseError),
 }
 
 pub fn packet(client: &mut ::game::Client, packet: &::protocol::Packet)
@@ -47,6 +48,13 @@ impl From<::game::enums::DecodingError> for Error
 {
     fn from(e: ::game::enums::DecodingError) -> Self {
         Error::EnumDecodingError(e)
+    }
+}
+
+impl From<::uuid::ParseError> for Error
+{
+    fn from(e: ::uuid::ParseError) -> Self {
+        Error::UuidParseError(e)
     }
 }
 

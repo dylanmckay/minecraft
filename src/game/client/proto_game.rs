@@ -1,6 +1,7 @@
 use game;
 use protocol;
 use na;
+use uuid;
 
 /// A game which hasn't quite begun.
 #[derive(Clone,Debug)]
@@ -33,7 +34,7 @@ pub enum ProtoGame
 #[derive(Clone,Debug)]
 pub struct UserInformation
 {
-    pub uuid: String,
+    pub uuid: uuid::Uuid,
     pub username: String,
 }
 

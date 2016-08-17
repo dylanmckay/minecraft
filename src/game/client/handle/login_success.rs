@@ -1,11 +1,12 @@
 use game::{client, Client};
 use game::client::{State, ProtoGame};
 use protocol::packet::LoginSuccess;
+use uuid::Uuid;
 
 pub fn login_success(client: &mut Client, packet: &LoginSuccess)
     -> Result<(), client::handle::Error> {
     let user_information = client::proto_game::UserInformation {
-        uuid: packet.uuid.clone(),
+        uuid: Uuid::parse_str(&packet.uuid)?,
         username: packet.username.clone(),
     };
 
