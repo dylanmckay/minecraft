@@ -99,7 +99,7 @@ impl Client
     }
 
     fn handle_packet(&mut self, packet: &Packet) {
-        client::handle::packet(self, packet)
+        client::handle::packet(self, packet).unwrap()
     }
 }
 
