@@ -27,6 +27,8 @@ pub enum Packet
 
     PlayerAbilities(PlayerAbilities),
     HeldItemChange(HeldItemChange),
+
+    EntityStatus(EntityStatus),
 }
 
 impl Packet
@@ -77,7 +79,8 @@ impl Packet
             SetCompression,
             PluginMessage,
             PlayerAbilities,
-            HeldItemChange
+            HeldItemChange,
+            EntityStatus
         )
     }
 }
@@ -127,6 +130,7 @@ mod parse {
             Server => SpawnPosition,
             Server => PlayerAbilities,
             Server => HeldItemChange,
+            Server => EntityStatus,
         )
     }
 }
