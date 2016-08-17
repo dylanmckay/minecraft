@@ -1,3 +1,4 @@
+use game;
 use protocol;
 
 /// A game which hasn't quite begun.
@@ -24,8 +25,7 @@ pub enum ProtoGame
 
     /// We have received a 'join game' packet.
     JoinedGame {
-        user_information: UserInformation,
-        player_information: PlayerInformation,
+        game_information: GameInformation,
     },
 }
 
@@ -42,6 +42,15 @@ pub struct PlayerInformation
     pub entity_id: i32,
 }
 
+#[derive(Clone,Debug)]
+pub struct GameInformation
+{
+    pub user_information: UserInformation,
+    pub player_information: PlayerInformation,
+
+    pub difficulty: Option<game::Difficulty>,
+}
+
 impl ProtoGame
 {
     pub fn new() -> Self { ProtoGame::HandshakePending }
@@ -54,6 +63,13 @@ impl ProtoGame
             ProtoGame::PendingJoin { .. } => protocol::GameState::Play,
             ProtoGame::JoinedGame { .. } => protocol::GameState::Play,
         }
+    }
+}
+
+impl GameInformation
+{
+    pub fn is_complete(&self) -> bool {
+        self.difficulty.is_some()
     }
 }
 

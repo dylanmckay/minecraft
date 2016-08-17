@@ -1,3 +1,4 @@
+#[derive(Clone,Debug)]
 pub struct DecodingError;
 
 #[derive(Copy,Clone,Debug,PartialEq,Eq)]
@@ -22,6 +23,15 @@ pub enum Dimension
     Nether = -1,
     Overworld = 0,
     End = 1,
+}
+
+#[derive(Copy,Clone,Debug,PartialEq,Eq)]
+pub enum Difficulty
+{
+    Peaceful = 0,
+    Easy = 1,
+    Normal = 2,
+    Hard = 3,
 }
 
 impl GameVariant
@@ -70,6 +80,20 @@ impl Dimension
             -1 => Ok(Dimension::Nether),
             0 => Ok(Dimension::Overworld),
             1 => Ok(Dimension::End),
+            _ => Err(DecodingError),
+        }
+    }
+}
+
+impl Difficulty
+{
+    pub fn encode(self) -> u8 { self as u8 }
+    pub fn decode(val: u8) -> Result<Self, DecodingError> {
+        match val {
+            0 => Ok(Difficulty::Peaceful),
+            1 => Ok(Difficulty::Easy),
+            2 => Ok(Difficulty::Normal),
+            3 => Ok(Difficulty::Hard),
             _ => Err(DecodingError),
         }
     }

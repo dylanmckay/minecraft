@@ -9,8 +9,11 @@ pub fn join_game(client: &mut Client, packet: &JoinGame)
         };
 
         client::State::ProtoGame(client::ProtoGame::JoinedGame {
-            user_information: user_information.clone(),
-            player_information: player_information,
+            game_information: client::proto_game::GameInformation {
+                user_information: user_information.clone(),
+                player_information: player_information,
+                difficulty: None,
+            }
         })
     } else {
         return Err(client::handle::Error::IncorrectState { expected_state: "pending join" });
