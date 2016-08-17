@@ -3,6 +3,7 @@ pub use self::login::{LoginStart, LoginSuccess};
 pub use self::encryption::{EncryptionRequest, EncryptionResponse};
 pub use self::compression::SetCompression;
 pub use self::management::JoinGame;
+pub use self::messaging::PluginMessage;
 
 macro_rules! define_packet {
     ($id:expr => $name:ident; [
@@ -47,4 +48,5 @@ pub mod login;
 pub mod encryption;
 pub mod compression;
 pub mod management;
+pub mod messaging;
 
