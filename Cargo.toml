@@ -9,6 +9,7 @@ mio = "0.5.1"
 flate2 = "0.2.14"
 nalgebra = "0.8.2"
 hematite-nbt = "0.2.0"
+uuid = "0.3.0"
 
 [[bin]]
 name = "client"
