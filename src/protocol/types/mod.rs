@@ -35,6 +35,13 @@ pub trait ReadableType : Clone + ::std::fmt::Debug
     }
 }
 
+impl<T: ReadableType> ReadableType for Option<T>
+{
+    fn read(read: &mut ::std::io::Read) -> Result<Self, Error> {
+        T::optional_read(read)
+    }
+}
+
 
 pub trait WritableType : Clone + ::std::fmt::Debug
 {
@@ -63,10 +70,19 @@ pub trait WritableType : Clone + ::std::fmt::Debug
     }
 }
 
+impl<T: WritableType> WritableType for Option<T>
+{
+    fn write(&self, write: &mut ::std::io::Write) -> Result<(), Error> {
+        T::optional_write(self, write)
+    }
+}
+
 pub trait Type : Clone + ::std::fmt::Debug + ReadableType + WritableType
 {
     fn size_bytes(&self) -> usize {
         self.write_vec().unwrap().len()
     }
 }
+
+impl<T: Type> Type for Option<T> { }
 
