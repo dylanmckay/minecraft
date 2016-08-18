@@ -8,22 +8,27 @@ pub struct Composite<T>
     pub elements: Vec<T>,
 }
 
-impl<T: ReadableType> ReadableType for Composite<T>
+impl<T> Composite<T>
 {
-    fn read(read: &mut Read) -> Result<Self, Error> {
+    pub fn read_with<F>(read: &mut Read, mut f: F) -> Result<Self, Error>
+        where F: FnMut(&mut Read) -> Result<T, Error> {
         let length = VarInt::read(read)?;
 
         // FIXME: validate the length so we don't read too much data.
 
         let mut items = Vec::new();
-
         for _ in 0..length.0 {
-            items.push(T::read(read)?);
+            items.push(f(read)?);
         }
 
-        Ok(Composite {
-            elements: items,
-        })
+        Ok(Composite { elements: items })
+    }
+}
+
+impl<T: ReadableType> ReadableType for Composite<T>
+{
+    fn read(read: &mut Read) -> Result<Self, Error> {
+        Composite::read_with(read, |read| T::read(read))
     }
 }
 

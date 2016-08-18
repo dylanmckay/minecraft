@@ -23,12 +23,35 @@ pub type ByteArray = Composite<u8>;
 pub trait ReadableType : Clone + ::std::fmt::Debug
 {
     fn read(read: &mut ::std::io::Read) -> Result<Self, Error>;
+
+    fn optional_read(read: &mut ::std::io::Read) -> Result<Option<Self>, Error> {
+        let has_value = bool::read(read)?;
+
+        if has_value {
+            Self::read(read).map(|v| Some(v))
+        } else {
+            Ok(None)
+        }
+    }
 }
 
 
 pub trait WritableType : Clone + ::std::fmt::Debug
 {
     fn write(&self, write: &mut ::std::io::Write) -> Result<(), Error>;
+
+    fn optional_write(value: &Option<Self>, write: &mut ::std::io::Write) -> Result<(), Error> {
+        use byteorder::WriteBytesExt;
+
+        if let Some(ref v) = *value {
+            write.write_u8(1)?;
+            v.write(write)?;
+        } else {
+            write.write_u8(0)?;
+        }
+
+        Ok(())
+    }
 
     fn write_vec(&self) -> Result<Vec<u8>, Error> {
         use std::io::Cursor;
