@@ -25,32 +25,30 @@ pub struct Player
 #[derive(Clone, Debug)]
 pub enum Action
 {
-    AddPlayer {
-        name: String,
-        properties: Array<Property>,
-        game_mode: VarInt,
-        ping: VarInt,
-        display_name: Option<Chat>,
-    },
-    UpdateGameMode {
-        game_mode: VarInt,
-    },
-    UpdateLatency {
-        ping: VarInt,
-    },
-    UpdateDisplayName {
-        display_name: Option<Chat>,
-    },
+    AddPlayer(AddPlayer),
+    UpdateGameMode(UpdateGameMode),
+    UpdateLatency(UpdateLatency),
+    UpdateDisplayName(UpdateDisplayName),
     RemovePlayer,
 }
 
-#[derive(Clone, Debug)]
-pub struct Property
-{
-    pub name: String,
-    pub value: String,
-    pub signature: Option<String>,
-}
+define_composite_type!(AddPlayer => [
+    name: String,
+    properties: Array<Property>,
+    game_mode: VarInt,
+    ping: VarInt,
+    display_name: Option<Chat>
+]);
+
+define_composite_type!(UpdateGameMode => [ game_mode: VarInt ]);
+define_composite_type!(UpdateLatency => [ ping: VarInt ]);
+define_composite_type!(UpdateDisplayName => [ display_name: Option<Chat> ]);
+
+define_composite_type!(Property => [
+    name: String,
+    value: String,
+    signature: Option<String>
+]);
 
 impl ::protocol::packet::Realization for PlayerListItem
 {
@@ -66,18 +64,29 @@ impl ::protocol::packet::Realization for PlayerListItem
 
     fn write_payload(&self, _write: &mut Write) -> Result<(), Error> {
         unimplemented!();
-        Ok(())
     }
 }
 
 impl Player
 {
     pub fn read(action_id: VarInt, read: &mut Read) -> Result<Self, Error> {
+        Ok(Player {
+            uuid: Uuid::read(read)?,
+            action: Action::read(action_id, read)?,
+        })
+    }
+}
+
+impl Action
+{
+    pub fn read(action_id: VarInt, read: &mut Read) -> Result<Self, Error> {
         match action_id {
-            ADD_PLAYER_ID => {
-                unimplemented!()
-            },
-            _ => unimplemented!(),
+            ADD_PLAYER_ID => Ok(Action::AddPlayer(AddPlayer::read(read)?)),
+            UPDATE_GAME_MODE_ID => Ok(Action::UpdateGameMode(UpdateGameMode::read(read)?)),
+            UPDATE_LATENCY_ID => Ok(Action::UpdateLatency(UpdateLatency::read(read)?)),
+            UPDATE_DISPLAY_NAME_ID => Ok(Action::UpdateDisplayName(UpdateDisplayName::read(read)?)),
+            REMOVE_PLAYER_ID => Ok(Action::RemovePlayer),
+            d => Err(Error::InvalidDiscriminator("player list item action id", d.0 as _)),
         }
     }
 }
