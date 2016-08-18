@@ -4,8 +4,9 @@ pub use self::position::Position;
 pub use self::aliases::*;
 pub use self::slot::Slot;
 pub use self::chat::Chat;
-pub use self::statistic::Statistic;
 
+#[macro_use]
+pub mod composite;
 pub mod string;
 pub mod integer;
 pub mod varint;
@@ -13,7 +14,6 @@ pub mod array;
 pub mod position;
 pub mod slot;
 pub mod chat;
-pub mod statistic;
 pub mod aliases;
 
 use protocol::Error;

@@ -10,6 +10,11 @@ define_packet!(0x00 => Handshake; [
     next_state: VarInt
 ]);
 
+define_composite_type!(Statistic => [
+   name: String,
+   value: String
+]);
+
 define_packet!(0x07 => Statistics; [
     statistics: Array<Statistic>
 ]);
