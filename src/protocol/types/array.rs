@@ -23,6 +23,16 @@ impl<T> Array<T>
 
         Ok(Array { elements: items })
     }
+
+    pub fn read_fixed_length(length: usize, read: &mut Read) -> Result<Self, Error>
+        where T: ReadableType {
+        let mut elements = Vec::new();
+        for _ in (0..length).into_iter() {
+            elements.push(T::read(read)?);
+        }
+
+        Ok(Array { elements: elements })
+    }
 }
 
 impl<T: ReadableType> ReadableType for Array<T>

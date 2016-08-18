@@ -4,6 +4,7 @@ pub use self::position::Position;
 pub use self::aliases::*;
 pub use self::slot::Slot;
 pub use self::chat::Chat;
+pub use self::chunk_section::ChunkSection;
 
 #[macro_use]
 pub mod composite;
@@ -14,6 +15,7 @@ pub mod array;
 pub mod position;
 pub mod slot;
 pub mod chat;
+pub mod chunk_section;
 pub mod aliases;
 
 use protocol::Error;

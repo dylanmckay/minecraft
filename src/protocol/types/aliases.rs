@@ -4,6 +4,8 @@ use uuid::Uuid;
 use std::io::prelude::*;
 
 pub type EntityId = VarInt;
+pub type Int = i32;
+pub type Long = i64;
 
 impl ReadableType for Uuid
 {
