@@ -11,6 +11,6 @@ define_packet!(0x00 => Handshake; [
 ]);
 
 define_packet!(0x07 => Statistics; [
-    statistics: Composite<Statistic>
+    statistics: Array<Statistic>
 ]);
 

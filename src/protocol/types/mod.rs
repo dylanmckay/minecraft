@@ -1,5 +1,5 @@
 pub use self::varint::VarInt;
-pub use self::composite::Composite;
+pub use self::array::Array;
 pub use self::position::Position;
 pub use self::aliases::*;
 pub use self::slot::Slot;
@@ -9,7 +9,7 @@ pub use self::statistic::Statistic;
 pub mod string;
 pub mod integer;
 pub mod varint;
-pub mod composite;
+pub mod array;
 pub mod position;
 pub mod slot;
 pub mod chat;
@@ -18,7 +18,7 @@ pub mod aliases;
 
 use protocol::Error;
 
-pub type ByteArray = Composite<u8>;
+pub type ByteArray = Array<u8>;
 
 pub trait ReadableType : Clone + ::std::fmt::Debug
 {

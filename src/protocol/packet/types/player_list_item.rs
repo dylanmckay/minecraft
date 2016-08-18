@@ -12,7 +12,7 @@ const REMOVE_PLAYER_ID: VarInt = VarInt(4);
 #[derive(Clone, Debug)]
 pub struct PlayerListItem
 {
-    pub players: Composite<Player>,
+    pub players: Array<Player>,
 }
 
 #[derive(Clone, Debug)]
@@ -27,7 +27,7 @@ pub enum Action
 {
     AddPlayer {
         name: String,
-        properties: Composite<Property>,
+        properties: Array<Property>,
         game_mode: VarInt,
         ping: VarInt,
         display_name: Option<Chat>,
@@ -59,7 +59,7 @@ impl ::protocol::packet::Realization for PlayerListItem
 
     fn parse(read: &mut Read) -> Result<Self, Error> {
         let action_id = VarInt::read(read)?;
-        let players = Composite::read_with(read, |read| Player::read(action_id, read))?;
+        let players = Array::read_with(read, |read| Player::read(action_id, read))?;
 
         Ok(PlayerListItem { players: players })
     }
