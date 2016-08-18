@@ -31,6 +31,8 @@ pub enum Packet
 
     EntityStatus(EntityStatus),
     PlayerListItem(PlayerListItem),
+
+    ChunkData(ChunkData),
 }
 
 impl Packet
@@ -84,7 +86,8 @@ impl Packet
             PlayerAbilities,
             HeldItemChange,
             EntityStatus,
-            PlayerListItem
+            PlayerListItem,
+            ChunkData
         )
     }
 }
@@ -137,6 +140,7 @@ mod parse {
             Server => HeldItemChange,
             Server => EntityStatus,
             Server => PlayerListItem,
+            Server => ChunkData,
         )
     }
 }

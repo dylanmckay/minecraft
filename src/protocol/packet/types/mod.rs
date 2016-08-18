@@ -7,6 +7,7 @@ pub use self::messaging::PluginMessage;
 pub use self::player::{PlayerAbilities, HeldItemChange};
 pub use self::entity::EntityStatus;
 pub use self::player_list_item::PlayerListItem;
+pub use self::chunk::ChunkData;
 
 macro_rules! define_packet {
     ($id:expr => $name:ident; [
@@ -56,4 +57,5 @@ pub mod messaging;
 pub mod player;
 pub mod entity;
 pub mod player_list_item;
+pub mod chunk;
 

@@ -1,5 +1,6 @@
 use protocol::prelude::*;
 use uuid::Uuid;
+use nbt;
 
 use std::io::prelude::*;
 
@@ -30,4 +31,22 @@ impl WritableType for Uuid
 }
 
 impl Type for Uuid { }
+
+
+impl ReadableType for nbt::Blob
+{
+    fn read(read: &mut Read) -> Result<Self, Error> {
+        Ok(nbt::Blob::from_reader(read)?)
+    }
+}
+
+impl WritableType for nbt::Blob
+{
+    fn write(&self, write: &mut Write) -> Result<(), Error> {
+        nbt::Blob::write(self, write)?;
+        Ok(())
+    }
+}
+
+impl Type for nbt::Blob { }
 

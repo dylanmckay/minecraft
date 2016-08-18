@@ -21,6 +21,7 @@ impl ReadableType for ChunkSection
         let palette = Array::read(read)?;
         let data = Array::read(read)?;
         let block_light = Array::read_fixed_length(TOTAL_BLOCKS / 2, read)?;
+        println!("data: {:#?}", data);
 
         let mut sky_light_bytes = Vec::new();
         read.read_to_end(&mut sky_light_bytes)?;
