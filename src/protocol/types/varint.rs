@@ -1,4 +1,4 @@
-use protocol::{Type, Error};
+use protocol::prelude::*;
 use std::io::{Read, Write};
 
 use byteorder::{ReadBytesExt, WriteBytesExt};
@@ -7,7 +7,7 @@ use byteorder::{ReadBytesExt, WriteBytesExt};
 #[derive(Copy,Clone,Debug,PartialEq,Eq)]
 pub struct VarInt(pub i32);
 
-impl Type for VarInt
+impl ReadableType for VarInt
 {
     fn read(read: &mut Read) -> Result<Self, Error> {
         const PART : u32 = 0x7F;
@@ -30,7 +30,10 @@ impl Type for VarInt
 
         Result::Ok(VarInt(val as i32))
     }
+}
 
+impl WritableType for VarInt
+{
     fn write(&self, write: &mut Write) -> Result<(), Error> {
         const PART : u32 = 0x7F;
         let mut val = self.0 as u32;
@@ -45,4 +48,6 @@ impl Type for VarInt
         }
     }
 }
+
+impl Type for VarInt { }
 

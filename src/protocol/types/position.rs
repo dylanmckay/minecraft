@@ -1,4 +1,4 @@
-use protocol::{Type, Error};
+use protocol::prelude::*;
 use std::io::{Read, Write};
 
 use byteorder::{BigEndian,ReadBytesExt, WriteBytesExt};
@@ -11,7 +11,7 @@ pub struct Position
     pub z: i32,
 }
 
-impl Type for Position {
+impl ReadableType for Position {
     fn read(read: &mut Read) -> Result<Self, Error> {
         let val = read.read_u64::<BigEndian>()?;
 
@@ -21,7 +21,10 @@ impl Type for Position {
             z: (val << 38 >> 38) as i32,
         })
     }
+}
 
+impl WritableType for Position
+{
     fn write(&self, write: &mut Write) -> Result<(), Error> {
         let (x,y,z) = (self.x as u64, self.y as u64, self.z as u64);
         let val = ((x & 0x3FFFFFF) << 38) | ((y & 0xFFF) << 26) | (z & 0x3FFFFFF);
@@ -30,6 +33,8 @@ impl Type for Position {
         Ok(())
     }
 }
+
+impl Type for Position { }
 
 impl Into<::na::Vector3<f32>> for Position
 {

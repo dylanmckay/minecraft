@@ -30,7 +30,7 @@ macro_rules! define_packet {
 
                 Ok($name {
                     $(
-                        $field: ::protocol::Type::read(read)?,
+                        $field: ::protocol::types::ReadableType::read(read)?,
                     )*
                 })
             }

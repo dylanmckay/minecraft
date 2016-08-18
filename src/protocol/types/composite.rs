@@ -1,15 +1,14 @@
-use protocol::{Type, Error};
-use protocol::types::VarInt;
+use protocol::prelude::*;
 use std::io::{Read, Write};
 
 /// A list of other types.
 #[derive(Clone, Debug)]
-pub struct Composite<T: Type>
+pub struct Composite<T>
 {
     pub elements: Vec<T>,
 }
 
-impl<T: Type> Type for Composite<T>
+impl<T: ReadableType> ReadableType for Composite<T>
 {
     fn read(read: &mut Read) -> Result<Self, Error> {
         let length = VarInt::read(read)?;
@@ -26,7 +25,10 @@ impl<T: Type> Type for Composite<T>
             elements: items,
         })
     }
+}
 
+impl<T: WritableType> WritableType for Composite<T>
+{
     fn write(&self, write: &mut Write) -> Result<(), Error> {
         let length = VarInt(self.elements.len() as _);
         length.write(write)?;
@@ -38,4 +40,6 @@ impl<T: Type> Type for Composite<T>
         Ok(())
     }
 }
+
+impl<T: Type> Type for Composite<T> { }
 

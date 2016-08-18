@@ -1,4 +1,4 @@
-use protocol::{Type, Error};
+use protocol::prelude::*;
 use std::io::{Read, Write};
 use nbt;
 
@@ -16,7 +16,7 @@ pub enum Slot
     },
 }
 
-impl Type for Slot
+impl ReadableType for Slot
 {
     fn read(read: &mut Read) -> Result<Self, Error> {
         let block_id = read.read_i16::<BigEndian>()?;
@@ -42,7 +42,10 @@ impl Type for Slot
         }
 
     }
+}
 
+impl WritableType for Slot
+{
     fn write(&self, write: &mut Write) -> Result<(), Error> {
         match *self {
             Slot::Empty => {
@@ -62,4 +65,6 @@ impl Type for Slot
         Ok(())
     }
 }
+
+impl Type for Slot { }
 

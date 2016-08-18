@@ -1,5 +1,5 @@
 use protocol::packet::raw;
-use protocol::types::{Type, VarInt};
+use protocol::prelude::*;
 
 use std::io::{Cursor, Write, Read};
 use flate2::read::{ZlibEncoder, ZlibDecoder};

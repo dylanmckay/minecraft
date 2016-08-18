@@ -1,8 +1,7 @@
-use protocol::{Type, Error};
-use protocol::types::VarInt;
+use protocol::prelude::*;
 use std::io::{Read, Write};
 
-impl<'a> Type for String
+impl ReadableType for String
 {
     fn read(read: &mut Read) -> Result<Self, Error> {
         let byte_count = VarInt::read(read)?.0;
@@ -17,7 +16,10 @@ impl<'a> Type for String
         let str = String::from_utf8(str_bytes)?;
         Ok(str)
     }
+}
 
+impl WritableType for String
+{
     fn write(&self, write: &mut Write) -> Result<(), Error> {
         let byte_count = VarInt((self.as_bytes().len() as i32));
         byte_count.write(write)?;
@@ -27,4 +29,6 @@ impl<'a> Type for String
         Ok(())
     }
 }
+
+impl Type for String { }
 

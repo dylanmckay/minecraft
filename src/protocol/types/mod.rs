@@ -20,9 +20,14 @@ use protocol::Error;
 
 pub type ByteArray = Composite<u8>;
 
-pub trait Type : Clone + ::std::fmt::Debug
+pub trait ReadableType : Clone + ::std::fmt::Debug
 {
     fn read(read: &mut ::std::io::Read) -> Result<Self, Error>;
+}
+
+
+pub trait WritableType : Clone + ::std::fmt::Debug
+{
     fn write(&self, write: &mut ::std::io::Write) -> Result<(), Error>;
 
     fn write_vec(&self) -> Result<Vec<u8>, Error> {
@@ -33,7 +38,10 @@ pub trait Type : Clone + ::std::fmt::Debug
 
         Ok(buffer.into_inner())
     }
+}
 
+pub trait Type : Clone + ::std::fmt::Debug + ReadableType + WritableType
+{
     fn size_bytes(&self) -> usize {
         self.write_vec().unwrap().len()
     }

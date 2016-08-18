@@ -1,5 +1,4 @@
-use protocol::{Error, Type};
-use protocol::types::VarInt;
+use protocol::prelude::*;
 use std::io::{Read, Write, Cursor};
 use std;
 

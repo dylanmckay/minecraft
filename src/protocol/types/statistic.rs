@@ -1,5 +1,4 @@
-use protocol::{Type, Error};
-use protocol::types::VarInt;
+use protocol::prelude::*;
 use std::io::{Read, Write};
 
 #[derive(Clone,Debug,PartialEq,Eq)]
@@ -9,7 +8,7 @@ pub struct Statistic
     pub value: VarInt,
 }
 
-impl Type for Statistic
+impl ReadableType for Statistic
 {
     fn read(read: &mut Read) -> Result<Self, Error> {
         let name = String::read(read)?;
@@ -17,7 +16,10 @@ impl Type for Statistic
 
         Ok(Statistic { name: name, value: value })
     }
+}
 
+impl WritableType for Statistic
+{
     fn write(&self, write: &mut Write) -> Result<(), Error> {
         self.name.write(write)?;
         self.value.write(write)?;
@@ -25,4 +27,6 @@ impl Type for Statistic
         Ok(())
     }
 }
+
+impl Type for Statistic { }
 

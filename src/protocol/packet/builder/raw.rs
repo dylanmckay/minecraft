@@ -1,5 +1,4 @@
-use protocol::Type;
-use protocol::types::VarInt;
+use protocol::prelude::*;
 use std::collections::VecDeque;
 use std::io::Cursor;
 use std::cmp;
