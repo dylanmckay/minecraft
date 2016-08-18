@@ -8,6 +8,7 @@ pub use self::entity_status::entity_status;
 pub use self::held_item_change::held_item_change;
 pub use self::statistics::statistics;
 pub use self::player_list_item::player_list_item;
+pub use self::chunk_data::chunk_data;
 
 pub mod login_success;
 pub mod join_game;
@@ -19,6 +20,7 @@ pub mod entity_status;
 pub mod held_item_change;
 pub mod statistics;
 pub mod player_list_item;
+pub mod chunk_data;
 
 #[derive(Clone, Debug)]
 pub enum Error
@@ -43,6 +45,7 @@ pub fn packet(client: &mut ::game::Client, packet: &::protocol::Packet)
         Packet::EntityStatus(ref packet) => self::entity_status(client, packet),
         Packet::HeldItemChange(ref packet) => self::held_item_change(client, packet),
         Packet::PlayerListItem(ref packet) => self::player_list_item(client, packet),
+        Packet::ChunkData(ref packet) => self::chunk_data(client, packet),
         _ => panic!("don't know how to handle this packet yet: {:#?}", packet),
     }
 }
