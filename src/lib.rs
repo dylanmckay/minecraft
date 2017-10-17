@@ -1,7 +1,3 @@
-#![feature(question_mark)]
-#![feature(associated_consts)]
-#![feature(conservative_impl_trait)]
-
 pub mod protocol;
 pub mod game;
 
